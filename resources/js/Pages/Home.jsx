@@ -1,6 +1,8 @@
 export default function Home() {
     return <div className=" font-bebas">
 
+        <h1>REACT IS FOR REAL GS</h1>
+
         <div className="navbar flex flex-row justify-between">
             
             <div className="logo">
