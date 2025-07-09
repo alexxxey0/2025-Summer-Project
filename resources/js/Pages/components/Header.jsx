@@ -10,10 +10,10 @@ function Header(props) {
             <div className="border-b-2 border-black px-16 py-10 flex flex-row justify-between">
                 {/* Social media icons */}
                 <div className="flex flex-row gap-x-2 w-[10%] justify-around items-center">
-                    <SmallIcon src="images/facebook_icon.svg" alt="Facebook icon" />
-                    <SmallIcon src="images/instagram_icon.svg" alt="Instagram icon" />
-                    <SmallIcon src="images/youtube_icon.svg" alt="Youtube icon" />
-                    <SmallIcon src="images/pinterest_icon.svg" alt="Pinterest icon" />
+                    <a href=""><SmallIcon src="images/facebook_icon.svg" alt="Facebook icon" /></a>
+                    <a href=""><SmallIcon src="images/instagram_icon.svg" alt="Instagram icon" /></a>
+                    <a href=""><SmallIcon src="images/youtube_icon.svg" alt="Youtube icon" /></a>
+                    <a href=""><SmallIcon src="images/pinterest_icon.svg" alt="Pinterest icon" /></a>
                 </div>
 
                 {/* Special offer text */}
@@ -52,9 +52,9 @@ function Header(props) {
 
                 {/* Icons */}
                 <div className="flex flex-row gap-x-4">
-                    <SmallIcon src="images/user_icon.svg" alt="User icon" />
-                    <SmallIcon src="images/search_icon.svg" alt="Search icon" />
-                    <SmallIcon src="images/cart_icon.svg" alt="Cart icon" />
+                    <a href=""><SmallIcon src="images/user_icon.svg" alt="User icon" /> </a>
+                    <a href=""><SmallIcon src="images/search_icon.svg" alt="Search icon" /> </a>
+                    <a href=""><SmallIcon src="images/cart_icon.svg" alt="Cart icon" /> </a>
                 </div>
             </div>
         </header>
