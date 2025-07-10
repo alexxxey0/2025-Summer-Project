@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import SmallIcon from "./SmallIcon";
+import { Link } from "@inertiajs/react";
 
 
 
@@ -44,7 +45,7 @@ function Header(props) {
                                     style={{ borderBottomColor: "gray-300" }}
                                 ></div>
 
-                                <a className="bg-black text-white p-2 rounded shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition" href="">Log in</a>
+                                <Link className="bg-black text-white p-2 rounded shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition" href="/login">Log in</Link>
                                 <div className="flex flex-col gap-y-1">
                                     <p className="text-xs">Not registered yet?</p>
                                     <a className="bg-black text-white p-2 rounded shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition" href="">Register</a>
@@ -60,10 +61,10 @@ function Header(props) {
             {/* Navbar */}
             <div className="px-16 mt-4 flex flex-row items-center justify-between">
                 {/* Stylish online store heading */}
-                <div>
+                <Link href="/">
                     <h1 className="font-bold font-bebas text-6xl">STYLISH</h1>
                     <h2>Online Store</h2>
-                </div>
+                </Link>
 
                 {/* Categories */}
                 <div className="flex flex-row text-xl gap-x-20 items-center">
