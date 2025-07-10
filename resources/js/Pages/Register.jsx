@@ -3,10 +3,10 @@ import { Link } from "@inertiajs/react";
 
 function Register() {
     return (
-        <div className='px-16 py-16'>
+        <div className='register_form_with_title my-32 w-3/12 py-16 px-24 rounded-lg bg-gray-200 mx-auto'>
             <h1 className='text-center text-5xl font-bold mb-8'>Register</h1>
 
-            <form action="" className='flex flex-col gap-y-4 mx-auto w-2/12'>
+            <form action="" className='flex flex-col gap-y-4 mx-auto'>
                 <p><span className='text-red-500'>*</span> indicates a required field</p>
 
                 <div className='flex flex-col'>
