@@ -48,7 +48,7 @@ function Header(props) {
                                 <Link className="bg-black text-white p-2 rounded shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition" href="/login">Log in</Link>
                                 <div className="flex flex-col gap-y-1">
                                     <p className="text-xs">Not registered yet?</p>
-                                    <a className="bg-black text-white p-2 rounded shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition" href="">Register</a>
+                                    <Link className="bg-black text-white p-2 rounded shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition" href="/register">Register</Link>
                                 </div>
                             </div>
                         )}
