@@ -1,7 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return Inertia::render('Home');
@@ -14,3 +15,11 @@ Route::get('/login', function () {
 Route::get('/register', function () {
     return Inertia::render('Register');
 })->name('register_page');
+
+Route::post('/register', [UserController::class, 'register'])->name('register');
+
+Route::get('/verify_email/{token}', [UserController::class, 'verify_email'])->name('verify_email');
+
+Route::get('/email_verification_notice', function () {
+    return Inertia::render('EmailVerificationNotice');
+})->name('email_verification_notice');

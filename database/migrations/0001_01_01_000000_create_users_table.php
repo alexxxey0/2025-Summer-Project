@@ -20,6 +20,7 @@ return new class extends Migration
             $table->boolean('email_confirmed')->default(false);
             $table->string('password_hash', 256);
             $table->string('profile_picture_path', 100)->nullable();
+            $table->string('verification_token', 16)->unique();
             $table->timestamps();
         });
 
