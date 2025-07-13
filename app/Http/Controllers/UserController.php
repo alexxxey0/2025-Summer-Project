@@ -30,10 +30,16 @@ class UserController extends Controller {
             'surname' => ['required', 'max:30'],
             'email' => ['required', 'email', 'max:50', 'unique:users'],
             'phone_number' => ['nullable', 'max:20'],
-            'profile_picture_path' => ['nullable'],
+            'profile_picture' => ['image', 'nullable', 'max:2048'],
             // Password must be at least 6 characters long, have at least one lowercase and one uppercase letter, and must have either a number or a symbol
             'password' => ['required', 'confirmed', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d\W]).+$/']
         ]);
+
+        // Save the profile picture to the server
+        if (isset($request['profile_picture'])) {
+            $profile_picture = $request->file('profile_picture');
+            $profile_picture_path = $profile_picture->store('profile_pictures', 'public');
+        }
 
         // Generate a unique verification token
         do {
@@ -46,9 +52,10 @@ class UserController extends Controller {
             'name' => $form_data['name'],
             'surname' => $form_data['surname'],
             'email' => $form_data['email'],
-            'phone_number' => $form_data['phone_number'],
+            'phone_number' => $form_data['phone_number'] ?? null,
             'password_hash' => bcrypt($form_data['password']),
-            'verification_token' => $verification_token
+            'verification_token' => $verification_token,
+            'profile_picture_path' => $profile_picture_path ?? null
         ]);
 
         // Send an email confirmation link to user's email

@@ -3,6 +3,7 @@ import { Link } from "@inertiajs/react";
 import { useForm } from '@inertiajs/react';
 
 function Register() {
+    // Form helper from Inertia documentation (https://www.inertiajs.com/forms)
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         surname: '',
@@ -57,7 +58,7 @@ function Register() {
                 </div>
                 <div className='flex flex-col'>
                     <label htmlFor="profile_picture">Profile picture</label>
-                    <input className='p-1 border-1 border-black rounded-md' type="file" accept="image/*" name="profile_picture" id="profile_picture" value={data.profile_picture} onChange={e => setData('profile_picture', e.target.value)} />
+                    <input className='p-1 border-1 border-black rounded-md' type="file" accept="image/*" name="profile_picture" id="profile_picture" onChange={e => setData('profile_picture', e.target.files[0])} />
                     {errors.profile_picture && <div>{errors.profile_picture}</div>}
                 </div>
 
