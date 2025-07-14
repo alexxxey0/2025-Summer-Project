@@ -18,6 +18,10 @@ Route::get('/register', function () {
 
 Route::post('/register', [UserController::class, 'register'])->name('register');
 
+Route::post('/login', [UserController::class, 'login'])->name('login');
+
+Route::get('/logout', [UserController::class, 'logout'])->name('logout');
+
 Route::get('/verify_email/{token}', [UserController::class, 'verify_email'])->name('verify_email');
 
 Route::get('/email_verification_notice', function () {

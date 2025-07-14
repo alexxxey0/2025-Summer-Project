@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import SmallIcon from "./SmallIcon";
 import { Link } from "@inertiajs/react";
+import { usePage } from '@inertiajs/react';
 
 
 
 function Header(props) {
     const [isOpen, setIsOpen] = useState(false);
+    const { auth } = usePage().props
 
     return (
         <header>
@@ -24,34 +26,41 @@ function Header(props) {
                 </div>
 
                 {/* Contact/Cart/Login links */}
-                <div className="w-[10%] flex flex-row justify-around items-center gap-x-2">
-                    <a className="border-12 border-transparent" href="">Contact</a>
-                    <a className="border-12 border-transparent" href="">Cart</a>
-                    <div className="flex flex-col gap-y-2 relative items-end" onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}
-                    >
-                        <a href="" className="border-12 border-transparent">Login</a>
-
-                        {/* Login/Register menu */}
-                        {isOpen && (
-                            <div
-                                onMouseEnter={() => setIsOpen(true)}
-                                onMouseLeave={() => setIsOpen(false)}
-                                className="absolute top-full w-40 flex flex-col gap-y-4 p-4 bg-white border border-gray-300 rounded shadow-lg"
+                <div className="flex flex-col">
+                    {auth.user && <p className="text-gray-500">Welcome, {auth.user.name} {auth.user.surname}!</p>}
+                    <div className="w-[10%] flex flex-row justify-around items-center gap-x-2">
+                        <a className="border-12 border-l-0 border-transparent" href="">Contact</a>
+                        <a className="border-12 border-transparent" href="">Cart</a>
+                        {auth.user ?
+                            <Link href="/logout" className="border-12 border-transparent whitespace-nowrap">Log out</Link>
+                            :
+                            <div className="flex flex-col gap-y-2 relative items-end" onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}
                             >
+                                <a href="" className="border-12 border-transparent">Login</a>
 
-                                {/* Arrow */}
-                                <div
-                                    className="absolute -top-2 right-3 w-0 h-0 border-l-6 border-l-transparent border-r-6 border-r-transparent border-b-6 border-b-gray-300"
-                                    style={{ borderBottomColor: "gray-300" }}
-                                ></div>
+                                {/* Login/Register menu */}
+                                {isOpen && (
+                                    <div
+                                        onMouseEnter={() => setIsOpen(true)}
+                                        onMouseLeave={() => setIsOpen(false)}
+                                        className="absolute top-full w-40 flex flex-col gap-y-4 p-4 bg-white border border-gray-300 rounded shadow-lg"
+                                    >
 
-                                <Link className="bg-black text-white p-2 rounded shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition" href="/login">Log in</Link>
-                                <div className="flex flex-col gap-y-1">
-                                    <p className="text-xs">Not registered yet?</p>
-                                    <Link className="bg-black text-white p-2 rounded shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition" href="/register">Register</Link>
-                                </div>
+                                        {/* Arrow */}
+                                        <div
+                                            className="absolute -top-2 right-3 w-0 h-0 border-l-6 border-l-transparent border-r-6 border-r-transparent border-b-6 border-b-gray-300"
+                                            style={{ borderBottomColor: "gray-300" }}
+                                        ></div>
+
+                                        <Link className="bg-black text-white p-2 rounded shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition" href="/login">Log in</Link>
+                                        <div className="flex flex-col gap-y-1">
+                                            <p className="text-xs">Not registered yet?</p>
+                                            <Link className="bg-black text-white p-2 rounded shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition" href="/register">Register</Link>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
-                        )}
+                        }
                     </div>
                 </div>
 

@@ -41,4 +41,8 @@ class User extends Authenticatable {
     }
 
     protected $primaryKey = 'user_id';
+
+    public function getAuthPassword() {
+        return $this->password_hash;
+    }
 }

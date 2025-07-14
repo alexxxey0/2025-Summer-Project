@@ -81,4 +81,39 @@ class UserController extends Controller {
 
         return to_route('home_page');
     }
+
+
+    public function login(Request $request) {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate(); // prevents session fixation
+            // Redirect the user to their originally intended destination after login.
+            // If no intended URL exists in the session, redirect to the given fallback route (e.g., home_page).
+            return redirect()->intended(route('home_page'));
+        }
+
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ]);
+    }
+
+    /**
+
+     * Log the user out of the application.
+
+     */
+
+    public function logout(Request $request) {
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect('/');
+    }
 }
