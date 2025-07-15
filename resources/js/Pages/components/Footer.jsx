@@ -4,7 +4,7 @@ function Footer(props) {
 
     return (
         <footer>
-            <div className="flex flex-row gap-20 justify-around border-t-2 mt-4 pt-8">
+            <div className="flex flex-row gap-20 justify-around border-t-2 pt-8 pb-8">
 
                 <div className="flex flex-col list-none">
                     <ul>
