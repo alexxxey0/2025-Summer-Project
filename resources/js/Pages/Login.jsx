@@ -28,7 +28,7 @@ function Login() {
                     <label htmlFor="password">Password</label>
                     <input className='p-1 border-1 border-black rounded-md' type="password" name="password" id="password" required value={data.password} onChange={e => setData('password', e.target.value)} />
                     {errors.password && <div>{errors.password}</div>}
-                    <Link className='text-gray-500 hover:text-gray-600 underline'>Forgot your password?</Link>
+                    <Link href='/reset_password' className='text-gray-500 hover:text-gray-600 underline'>Forgot your password?</Link>
                 </div>
 
                 <button type="submit" className='bg-black text-white p-2 rounded-md w-1/2 mx-auto mt-4 shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition cursor-pointer'>Log in</button>

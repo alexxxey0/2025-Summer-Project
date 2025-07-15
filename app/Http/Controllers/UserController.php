@@ -116,4 +116,35 @@ class UserController extends Controller {
 
         return redirect('/');
     }
+
+    public function send_password_reset_email(Request $request) {
+        $request->session()->forget('flash_message');
+
+        $request->validate([
+            'email' => ['required', 'email']
+        ]);
+
+        $email = $request['email'];
+
+        $email_exists = User::where('email', $email)->exists();
+
+        if (!$email_exists) {
+            return redirect()->back()->with('flash_message', "An account with this email address doesn't exist!");
+        }
+
+        $user = User::where('email', $email)->first();
+        $password_reset_token = $user['password_reset_token'];
+
+        // Generate password reset link using user's unique password reset token
+        $password_reset_url = route('reset_password_page', ['token' => $password_reset_token]);
+
+        Mail::send('emails.reset_password', ['url' => $password_reset_url], function ($message) use ($email) {
+            $message->to($email)->subject('Reset your password');
+        });
+    }
+
+    // Verify user's password reset token and redirect to password reset form if the token matches
+    public function reset_password_page (Request $request) {
+        $password_reset_token = $request->token;
+    }
 }

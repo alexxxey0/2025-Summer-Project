@@ -27,3 +27,11 @@ Route::get('/verify_email/{token}', [UserController::class, 'verify_email'])->na
 Route::get('/email_verification_notice', function () {
     return Inertia::render('EmailVerificationNotice');
 })->name('email_verification_notice');
+
+Route::get('/reset_password', function () {
+    return Inertia::render('PasswordResetRequest');
+})->name('password_reset_request');
+
+Route::post('/send_password_reset_email', [UserController::class, 'send_password_reset_email'])->name('send_password_reset_email');
+
+Route::get('/reset_password/{token}', [UserController::class, 'reset_password_page'])->name('reset_password_page');

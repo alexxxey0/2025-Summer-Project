@@ -10,6 +10,7 @@ function Header(props) {
     const { auth } = usePage().props
 
     return (
+        
         <header>
             <div className="border-b-2 border-black px-16 py-10 flex flex-row justify-between items-center">
                 {/* Social media icons */}
