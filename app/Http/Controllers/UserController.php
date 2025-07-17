@@ -139,7 +139,7 @@ class UserController extends Controller {
 
         $user = User::where('email', $email)->first();
         $password_reset_token = Str::random(16);
-        $user->update(['password_reset_token_hash', bcrypt($password_reset_token)]);
+        $user->update(['password_reset_token_hash' => bcrypt($password_reset_token)]);
 
         // Generate password reset link using user's unique password reset token
         $password_reset_url = route('reset_password_page', ['token' => $password_reset_token, 'email' => $email]);
@@ -163,12 +163,31 @@ class UserController extends Controller {
         $token_matches = Hash::check($request->token, $user['password_reset_token_hash']);
 
         if (!$token_matches) {
-            return redirect()->route('password_redirect_request')->with('flash_message', 'Invalid password reset token!');
+            return redirect()->route('password_reset_request')->with('flash_message', 'Invalid password reset token!');
         }
+
+        return Inertia::render('PasswordResetForm', ['email' => $request->email, 'token' => $request->token]);
+    }
+
+
+    public function reset_password(Request $request) {
+        $user = User::where('email', $request->email)->first();
+        $token_matches = Hash::check($request->token, $user['password_reset_token_hash']);
+        if (!$token_matches) {
+            return redirect()->back()->with('flash_message', 'Invalid password reset token!');
+        }
+
+        $form_fields = $request->validate([
+            // Password must be at least 6 characters long, have at least one lowercase and one uppercase letter, and must have either a number or a symbol
+            'password' => ['required', 'confirmed', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d\W]).+$/']
+        ]);
+
+
+        $user->update(['password_hash' => bcrypt($form_fields['password'])]);
 
         // Nullify password reset token
         $user->update(['password_reset_token_hash' => null]);
 
-        return Inertia::render('PasswordResetForm');
+        return to_route('home_page')->with('flash_message', "Your password has been successfully reset. You can now log in with your new password.");
     }
 }

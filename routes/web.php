@@ -35,3 +35,5 @@ Route::get('/reset_password', function () {
 Route::post('/send_password_reset_email', [UserController::class, 'send_password_reset_email'])->name('send_password_reset_email');
 
 Route::get('/reset_password/{email}/{token}', [UserController::class, 'reset_password_page'])->name('reset_password_page');
+
+Route::post('/reset_password', [UserController::class, 'reset_password'])->name('reset_password');
