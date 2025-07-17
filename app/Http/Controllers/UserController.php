@@ -3,16 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Inertia\Inertia;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller {
     // Send an email verification email
-    protected function send_verification_email($email, $verification_token) {
+    protected function send_verification_email($email, $verification_token_hash) {
         // Generate verification link using user's unique verification token
-        $verification_url = route('verify_email', ['token' => $verification_token]);
+        $verification_url = route('verify_email', ['token' => $verification_token_hash, 'email' => $email]);
 
         Mail::send('emails.verify_email', ['url' => $verification_url], function ($message) use ($email) {
             $message->to($email)->subject('Email address verification');
@@ -36,16 +38,12 @@ class UserController extends Controller {
         ]);
 
         // Save the profile picture to the server
-        if (isset($request['profile_picture'])) {
+        if (isset($request['profile_picture']) and !empty($request['profile_picture'])) {
             $profile_picture = $request->file('profile_picture');
             $profile_picture_path = $profile_picture->store('profile_pictures', 'public');
         }
 
-        // Generate a unique verification token
-        do {
-            $verification_token = Str::random(16);
-            $token_exists = User::where('verification_token', $verification_token)->exists();
-        } while ($token_exists);
+        $verification_token = Str::random(16);
 
         // Save unverified user to the database
         $unverified_user = User::create([
@@ -54,7 +52,8 @@ class UserController extends Controller {
             'email' => $form_data['email'],
             'phone_number' => $form_data['phone_number'] ?? null,
             'password_hash' => bcrypt($form_data['password']),
-            'verification_token' => $verification_token,
+            'verification_token_hash' => bcrypt($verification_token),
+            'password_reset_token_hash' => null,
             'profile_picture_path' => $profile_picture_path ?? null
         ]);
 
@@ -66,20 +65,26 @@ class UserController extends Controller {
 
     // Verify user's email after they have clicked the link from the email we sent
     public function verify_email(Request $request) {
-        // Find the unverified user by token
-        $user = User::where('verification_token', $request->token)->first();
+        $user = User::where('email', $request->email)->first();
 
         if (!$user) {
-            abort(404, 'Invalid or expired verification token.');
+            abort(404, 'Invalid email address.');
         }
 
-        // Change email_confirmed field value to true
-        $user->update(['email_confirmed' => true]);
+        $token_matches = Hash::check($request->token, $user['verification_token_hash']);
+
+        if (!$token_matches) {
+            abort(404, 'Invalid email verification token.');
+        }
+
+        // Change email_confirmed field value to true and nullify the verification token
+        $user->update(['email_confirmed' => true, 'verification_token_hash' => null]);
+
 
         // Log the user in
         Auth::login($user);
 
-        return to_route('home_page');
+        return to_route('home_page')->with('flash_message', "Your email address has been successfully verified!");
     }
 
 
@@ -133,18 +138,37 @@ class UserController extends Controller {
         }
 
         $user = User::where('email', $email)->first();
-        $password_reset_token = $user['password_reset_token'];
+        $password_reset_token = Str::random(16);
+        $user->update(['password_reset_token_hash', bcrypt($password_reset_token)]);
 
         // Generate password reset link using user's unique password reset token
-        $password_reset_url = route('reset_password_page', ['token' => $password_reset_token]);
+        $password_reset_url = route('reset_password_page', ['token' => $password_reset_token, 'email' => $email]);
 
         Mail::send('emails.reset_password', ['url' => $password_reset_url], function ($message) use ($email) {
             $message->to($email)->subject('Reset your password');
         });
+
+        return redirect()->back()->with('flash_message', "Password recovery instructions have been sent to your email.");
     }
 
+
     // Verify user's password reset token and redirect to password reset form if the token matches
-    public function reset_password_page (Request $request) {
-        $password_reset_token = $request->token;
+    public function reset_password_page(Request $request) {
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return redirect()->route('password_reset_request')->with('flash_message', "Invalid email address!");
+        }
+
+        $token_matches = Hash::check($request->token, $user['password_reset_token_hash']);
+
+        if (!$token_matches) {
+            return redirect()->route('password_redirect_request')->with('flash_message', 'Invalid password reset token!');
+        }
+
+        // Nullify password reset token
+        $user->update(['password_reset_token_hash' => null]);
+
+        return Inertia::render('PasswordResetForm');
     }
 }

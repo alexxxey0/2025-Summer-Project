@@ -4,13 +4,11 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
+    public function up(): void {
         Schema::create('users', function (Blueprint $table) {
             $table->increments('user_id');
             $table->string('name', 30);
@@ -20,8 +18,8 @@ return new class extends Migration
             $table->boolean('email_confirmed')->default(false);
             $table->string('password_hash', 256);
             $table->string('profile_picture_path', 100)->nullable();
-            $table->string('verification_token', 16)->unique();
-            $table->string('password_reset_token', 16)->unique();
+            $table->string('verification_token_hash', 256)->nullable();
+            $table->string('password_reset_token_hash', 256)->nullable();
             $table->timestamps();
         });
 
@@ -38,8 +36,7 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down(): void
-    {
+    public function down(): void {
         Schema::dropIfExists('users');
         Schema::dropIfExists('sessions');
     }

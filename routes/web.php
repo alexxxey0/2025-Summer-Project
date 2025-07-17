@@ -22,7 +22,7 @@ Route::post('/login', [UserController::class, 'login'])->name('login');
 
 Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 
-Route::get('/verify_email/{token}', [UserController::class, 'verify_email'])->name('verify_email');
+Route::get('/verify_email/{email}/{token}', [UserController::class, 'verify_email'])->name('verify_email');
 
 Route::get('/email_verification_notice', function () {
     return Inertia::render('EmailVerificationNotice');
@@ -34,4 +34,4 @@ Route::get('/reset_password', function () {
 
 Route::post('/send_password_reset_email', [UserController::class, 'send_password_reset_email'])->name('send_password_reset_email');
 
-Route::get('/reset_password/{token}', [UserController::class, 'reset_password_page'])->name('reset_password_page');
+Route::get('/reset_password/{email}/{token}', [UserController::class, 'reset_password_page'])->name('reset_password_page');
