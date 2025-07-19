@@ -10,7 +10,7 @@ function Header(props) {
     const { auth } = usePage().props
 
     return (
-        
+
         <header>
             <div className="border-b-2 border-black px-16 py-10 flex flex-row justify-between items-center">
                 {/* Social media icons */}
@@ -81,7 +81,7 @@ function Header(props) {
                     <a href="">HOME</a>
                     <a href="">MEN</a>
                     <a href="">WOMEN</a>
-                    <a href="">SHOP</a>
+                    <Link href="/shop">SHOP</Link>
                     <a href="">PAGE</a>
                     <a href="">SALE</a>
                     <a href="" className="bg-black text-white rounded-full px-2 py-1">Get PRO</a>

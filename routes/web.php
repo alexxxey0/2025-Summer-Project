@@ -3,6 +3,7 @@
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductController;
 
 Route::get('/', function () {
     return Inertia::render('Home');
@@ -37,3 +38,5 @@ Route::post('/send_password_reset_email', [UserController::class, 'send_password
 Route::get('/reset_password/{email}/{token}', [UserController::class, 'reset_password_page'])->name('reset_password_page');
 
 Route::post('/reset_password', [UserController::class, 'reset_password'])->name('reset_password');
+
+Route::get('/shop', [ProductController::class, 'all_products_page'])->name('all_products_page');
