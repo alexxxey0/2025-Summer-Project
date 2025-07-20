@@ -15,13 +15,12 @@ return new class extends Migration {
             $table->string('description', 2000)->nullable();
             $table->decimal('price', 6, 2);
             $table->string('type', 30); // shirt/pants/shoes etc.
-            $table->string('size', 10)->nullable();
             $table->string('color', 20)->nullable();
             $table->string('manufacturer', 30)->nullable();
             $table->char('gender', 1)->nullable(); // M/F
             $table->string('age_category', 10)->nullable(); // kid/adult
             $table->string('season', 10)->nullable(); // summer/winter
-            $table->integer('in_stock')->default(0);
+            $table->string('main_image_path', 100)->default('product_images/default_product.webp');
             $table->timestamps(); // created_at & updated_at
         });
     }

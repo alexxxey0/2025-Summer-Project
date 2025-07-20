@@ -78,7 +78,7 @@ function Header(props) {
 
                 {/* Categories */}
                 <div className="flex flex-row text-xl gap-x-20 items-center">
-                    <a href="">HOME</a>
+                    <Link href="/">HOME</Link>
                     <a href="">MEN</a>
                     <a href="">WOMEN</a>
                     <Link href="/shop">SHOP</Link>

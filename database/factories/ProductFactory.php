@@ -36,13 +36,12 @@ class ProductFactory extends Factory {
 
             'price' => fake()->randomFloat(2, 10, 500), // Min $10, max $500
             'type' => $type,
-            'size' => fake()->randomElement($sizes),
             'color' => $color,
             'manufacturer' => $manufacturer,
             'gender' => fake()->randomElement($genders),
             'age_category' => fake()->randomElement($ageCategories),
             'season' => $season,
-            'in_stock' => fake()->numberBetween(0, 1000),
+            'main_image_path' => 'products_images/random_product' . fake()->numberBetween(1, 5) . '.jpg'
         ];
     }
 }
