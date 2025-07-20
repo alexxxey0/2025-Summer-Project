@@ -8,6 +8,7 @@ import { usePage } from '@inertiajs/react';
 function Header(props) {
     const [isOpen, setIsOpen] = useState(false);
     const { auth } = usePage().props
+    const { asset_path } = usePage().props;
 
     return (
 
@@ -15,10 +16,10 @@ function Header(props) {
             <div className="border-b-2 border-black px-16 py-10 flex flex-row justify-between items-center">
                 {/* Social media icons */}
                 <div className="flex flex-row gap-x-2 w-[10%] justify-around items-center">
-                    <a href=""><SmallIcon src="images/facebook_icon.svg" alt="Facebook icon" /></a>
-                    <a href=""><SmallIcon src="images/instagram_icon.svg" alt="Instagram icon" /></a>
-                    <a href=""><SmallIcon src="images/youtube_icon.svg" alt="Youtube icon" /></a>
-                    <a href=""><SmallIcon src="images/pinterest_icon.svg" alt="Pinterest icon" /></a>
+                    <a href=""><SmallIcon src={asset_path + "images/facebook_icon.svg"} alt="Facebook icon" /></a>
+                    <a href=""><SmallIcon src={asset_path + "images/instagram_icon.svg"} alt="Instagram icon" /></a>
+                    <a href=""><SmallIcon src={asset_path + "images/youtube_icon.svg"} alt="Youtube icon" /></a>
+                    <a href=""><SmallIcon src={asset_path + "images/pinterest_icon.svg"} alt="Pinterest icon" /></a>
                 </div>
 
                 {/* Special offer text */}
@@ -89,9 +90,9 @@ function Header(props) {
 
                 {/* Icons */}
                 <div className="flex flex-row gap-x-4">
-                    <a href=""><SmallIcon src="images/user_icon.svg" alt="User icon" /> </a>
-                    <a href=""><SmallIcon src="images/search_icon.svg" alt="Search icon" /> </a>
-                    <a href=""><SmallIcon src="images/cart_icon.svg" alt="Cart icon" /> </a>
+                    <a href=""><SmallIcon src={asset_path + "/images/user_icon.svg"} alt="User icon" /> </a>
+                    <a href=""><SmallIcon src={asset_path + "images/search_icon.svg"} alt="Search icon" /> </a>
+                    <a href=""><SmallIcon src={asset_path + "images/cart_icon.svg"} alt="Cart icon" /> </a>
                 </div>
             </div>
         </header>

@@ -12,4 +12,12 @@ class ProductController extends Controller {
 
         return Inertia::render('AllProducts', ['products' => $products]);
     }
+
+
+    public function product_page(Request $request) {
+        $product = Product::where('product_id', $request->product_id)->first();
+        $product['main_image_path'] = asset('images/' . $product['main_image_path']);
+
+        return Inertia::render('Product', ['product' => $product]);
+    }
 }
