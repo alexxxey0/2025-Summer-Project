@@ -2,7 +2,22 @@ import React, { useState } from "react";
 import SizeButton from "./components/SizeButton";
 
 function Product({ product }) {
-    const sizes = product.sizes;
+    let sizes = product.sizes;
+
+    let weights = {
+        'XXS': 1,
+        'XS': 2,
+        'S': 3,
+        'M': 4,
+        'L': 5,
+        'XL': 6,
+        'XXL': 7
+    };
+
+    // If the size is in the weights array (which contains letter sizes), get the weight for this size for comparison.
+    // Otherwise, if the size is not in the weights table, it must be a number, so compare it as a number.
+    // This way, we can sort both letter sizes (S, M, L...) and numeric size (40, 41, 42, 43...)
+    sizes.sort((a, b) => (weights[a] ? weights[a] : Number(a)) - (weights[b] ? weights[b] : Number(b)));
 
     const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
     const [quantity, setQuantity] = useState(1);
@@ -14,7 +29,7 @@ function Product({ product }) {
     }
 
     function add_to_cart() {
-
+        // TODO
     }
 
     return (
