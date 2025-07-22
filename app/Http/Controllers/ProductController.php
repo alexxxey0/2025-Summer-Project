@@ -11,7 +11,17 @@ class ProductController extends Controller {
     public function all_products_page() {
         $products = Product::all();
 
-        return Inertia::render('AllProducts', ['products' => $products]);
+        $filter_columns = ['type', 'manufacturer', 'color', 'gender', 'age_category', 'season'];
+        $filter_columns_values = array();
+        foreach ($filter_columns as $filter_column) {
+            $values = Product::select($filter_column)->distinct()->get()->toArray();
+            foreach ($values as $value) {
+                $filter_columns_values[$filter_column][] = $value[$filter_column];
+            }
+        }
+        
+
+        return Inertia::render('AllProducts', ['products' => $products, 'filter_columns_values' => $filter_columns_values]);
     }
 
 
