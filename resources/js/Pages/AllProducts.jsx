@@ -46,7 +46,7 @@ function AllProducts(props) {
             for (const [key, value] of Object.entries(currentFilterParameters)) {
                 /*
                 If product's attribute's value is not among the selected values for this attribute, the product is not displayed.
-                With the example above, is product's type is neither Pants or Shoes, it is not shown.
+                With the example above, if product's type is neither Pants or Shoes, it is not shown.
                 If no checkbox is selected for particular attribute, then the currentFilterParameters won't contain this attribute
                 and it won't be taken into account during filtering.
                 */

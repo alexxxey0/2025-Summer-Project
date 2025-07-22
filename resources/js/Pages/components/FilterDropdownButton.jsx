@@ -8,10 +8,6 @@ function FilterDropdownButton(props) {
         setValuesVisible(!valuesVisible);
     }
 
-    function filterProducts(e) {
-
-    }
-
     return (
         <div className="flex flex-col gap-y-2">
             <div onClick={toggleValues} className="flex flex-row items-center gap-x-2 cursor-pointer hover:bg-gray-200 p-1 rounded">
