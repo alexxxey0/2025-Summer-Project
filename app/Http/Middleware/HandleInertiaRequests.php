@@ -42,7 +42,8 @@ class HandleInertiaRequests extends Middleware {
                 ? $request->user()
                 : null,
 
-            'flash_message' => $request->session()->get('flash_message') ? $request->session()->get('flash_message') : null
+            'flash_message' => $request->session()->get('flash_message') ? $request->session()->get('flash_message') : null,
+            'asset_path' => asset('')
         ]);
     }
 }

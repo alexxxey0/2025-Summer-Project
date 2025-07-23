@@ -9,8 +9,7 @@ use Illuminate\Support\Str;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
  */
-class UserFactory extends Factory
-{
+class UserFactory extends Factory {
     /**
      * The current password being used by the factory.
      */
@@ -21,23 +20,25 @@ class UserFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition(): array
-    {
+    public function definition(): array {
         return [
             'name' => fake()->name(),
+            'surname' => fake()->lastName(),
+            'phone_number' => fake()->phoneNumber(),
             'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
+            'email_confirmed' => false,
+            'password_hash' => Hash::make(Str::random(10)),
+            'profile_picture_path' => null,
+            'verification_token_hash' => Hash::make(Str::random(16)),
+            'password_reset_token_hash' => null,
         ];
     }
 
     /**
      * Indicate that the model's email address should be unverified.
      */
-    public function unverified(): static
-    {
-        return $this->state(fn (array $attributes) => [
+    public function unverified(): static {
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
     }
