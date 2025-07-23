@@ -63,7 +63,7 @@ function AllProducts(props) {
         <div className="my-16">
             <h1 className="text-center font-bold text-5xl mb-8">All products</h1>
 
-            <div className="w-10/12 mx-auto flex flex-row gap-x-32">
+            <div className="w-10/12 mx-auto flex flex-col lg:flex-row gap-y-16 gap-x-32">
                 {/* Filter options */}
                 <div className="text-lg">
                     <p className="mb-8">Filters</p>
@@ -85,7 +85,7 @@ function AllProducts(props) {
                             <option value="price_high_to_low">Price (from highest to lowest)</option>
                         </select>
                     </div>
-                    <div className="grid grid-cols-5 gap-y-4 gap-x-4">
+                    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-y-4 gap-x-4">
                         {displayedProducts.length === 0 ?
                             <h1 className="text-4xl mt-8">No matching products</h1>
                             :
