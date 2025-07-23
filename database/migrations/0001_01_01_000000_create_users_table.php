@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->boolean('email_confirmed')->default(false);
             $table->string('password_hash', 256);
             $table->string('profile_picture_path', 100)->nullable();
+            $table->string('role', 20)->nullable()->default('user');
             $table->string('verification_token_hash', 256)->nullable();
             $table->string('password_reset_token_hash', 256)->nullable();
             $table->timestamps();

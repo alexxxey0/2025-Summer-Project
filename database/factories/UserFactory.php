@@ -29,6 +29,7 @@ class UserFactory extends Factory {
             'email_confirmed' => false,
             'password_hash' => Hash::make(Str::random(10)),
             'profile_picture_path' => null,
+            'role' => 'user',
             'verification_token_hash' => Hash::make(Str::random(16)),
             'password_reset_token_hash' => null,
         ];
