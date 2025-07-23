@@ -36,9 +36,14 @@ function Product({ product }) {
         <div className="my-8">
             <h1 className="text-center font-bold text-3xl">{product.name}</h1>
 
-            <div className="flex flex-row gap-x-32 w-10/12 mx-auto mt-16">
-                <div className="w-4/12 flex flex-col items-center">
+            <div className="flex flex-col lg:flex-row gap-y-8 gap-x-32 w-10/12 mx-auto mt-16">
+                <div className="w-full lg:w-6/12 xl:w-4/12 flex flex-col items-center">
                     <img className="w-full" src={product.main_image_path} alt="Product main image" />
+
+                    <div className="flex flex-col gap-y-2 lg:hidden mt-8">
+                        <p className="border-2 rounded-xl p-2">{product.description}</p>
+                        <p className="font-bold text-xl">{product.price.replace(".", ",")} €</p>
+                    </div>
 
                     {/* Size buttons */}
                     <div className="flex flex-row justify-center gap-x-2 mt-8 w-8/12 *:w-3/12">
@@ -52,8 +57,10 @@ function Product({ product }) {
                         )}
                     </div>
 
+
+
                     {/* In stock, Total price, Add to cart, Quantity */}
-                    <div className="flex flex-col w-full mt-16 items-start gap-y-2">
+                    <div className="flex flex-col w-full mt-4 lg:mt-16 items-start gap-y-2">
                         <p>In stock: {product.in_stock[selectedSize] ? product.in_stock[selectedSize] : 0}</p>
                         <p>Total price: {(product.price * quantity).toFixed(2).toString().replace(".", ",") + " €"}</p>
                         <div className="flex flex-row gap-x-4 w-full">
@@ -68,9 +75,11 @@ function Product({ product }) {
                 </div>
 
                 {/* Description, Price, Product details */}
-                <div className="flex flex-col w-8/12 gap-y-8">
-                    <p className="border-2 rounded-xl p-2">{product.description}</p>
-                    <p className="font-bold text-xl">{product.price.replace(".", ",")} €</p>
+                <div className="flex flex-col w-full lg:w-8/12 gap-y-8">
+                    <div className="hidden lg:flex flex-col gap-y-4">
+                        <p className="border-2 rounded-xl p-2">{product.description}</p>
+                        <p className="font-bold text-xl">{product.price.replace(".", ",")} €</p>
+                    </div>
 
                     <div className="flex flex-row gap-x-20 text-lg">
                         <div className="flex flex-col font-bold gap-y-2">
