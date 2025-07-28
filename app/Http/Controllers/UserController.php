@@ -190,4 +190,13 @@ class UserController extends Controller {
 
         return to_route('home_page')->with('flash_message', "Your password has been successfully reset. You can now log in with your new password.");
     }
+
+
+    public function user_profile_page() {
+        if (Auth::check()) {
+            return Inertia::render('UserProfile', ['user' => Auth::user()]);
+        } else {
+            return to_route('login_page');
+        }
+    }
 }

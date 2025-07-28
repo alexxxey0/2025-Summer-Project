@@ -90,7 +90,7 @@ function Header(props) {
 
                 {/* Icons */}
                 <div className="flex flex-row gap-x-4">
-                    <a href=""><SmallIcon src={asset_path + "/images/user_icon.svg"} alt="User icon" /> </a>
+                    <Link href="/user_profile"><SmallIcon src={asset_path + "/images/user_icon.svg"} alt="User icon" /> </Link>
                     <a href=""><SmallIcon src={asset_path + "images/search_icon.svg"} alt="Search icon" /> </a>
                     <a href=""><SmallIcon src={asset_path + "images/cart_icon.svg"} alt="Cart icon" /> </a>
                 </div>

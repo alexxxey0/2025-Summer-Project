@@ -42,3 +42,5 @@ Route::post('/reset_password', [UserController::class, 'reset_password'])->name(
 Route::get('/shop', [ProductController::class, 'all_products_page'])->name('all_products_page');
 
 Route::get('/product/{product_id}', [ProductController::class, 'product_page'])->name('product_page');
+
+Route::get('/user_profile', [UserController::class, 'user_profile_page'])->name('user_profile_page');
