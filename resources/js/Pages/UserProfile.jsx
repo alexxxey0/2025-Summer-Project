@@ -60,8 +60,13 @@ function UserProfile() {
                                 <p>{format_date(auth.user.created_at)}</p>
                             </div>
 
-                            {/* Edit personal details button */}
-                            <Link href="/edit_personal_details" className="bg-black text-white p-2 rounded-md mt-8 shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition cursor-pointer">Edit personal details</Link>
+                            <div className="flex flex-col gap-y-2 mt-8 text-center">
+                                {/* Edit personal details button */}
+                                <Link href="/edit_personal_details" className="bg-black text-white p-2 rounded-md shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition cursor-pointer">Edit personal details</Link>
+
+                                {/* Change password button */}
+                                <Link href="/change_password" className="bg-black text-white p-2 rounded-md shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition cursor-pointer">Change password</Link>
+                            </div>
                         </div>
                     </div>
 

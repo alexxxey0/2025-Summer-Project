@@ -51,3 +51,9 @@ Route::get('/edit_personal_details', function () {
 })->name('edit_personal_details_page');
 
 Route::post('/edit_personal_details', [UserController::class, 'edit_personal_details'])->name('edit_personal_details');
+
+Route::get('/change_password', function () {
+    return Inertia::render('ChangePassword');
+})->name('change_password_page');
+
+Route::post('/change_password', [UserController::class, 'change_password'])->name('change_password');

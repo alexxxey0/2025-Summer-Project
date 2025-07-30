@@ -254,4 +254,17 @@ class UserController extends Controller {
             }
         }
     }
+
+
+    public function change_password(Request $request) {
+        // Password validation
+        $form_data = $request->validate([
+            // Password must be at least 6 characters long, have at least one lowercase and one uppercase letter, and must have either a number or a symbol
+            'password' => ['required', 'confirmed', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d\W]).+$/']
+        ]);
+
+        $user = User::where('user_id', $request->user_id)->first();
+        $user->update(['password_hash' => bcrypt($form_data['password'])]);
+        return to_route('user_profile_page')->with('flash_message', 'Password successfully changed!');
+    }
 }
