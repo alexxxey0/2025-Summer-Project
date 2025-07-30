@@ -1,10 +1,11 @@
 <?php
 
 use Inertia\Inertia;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\EnsureUserHasRole;
 use App\Http\Controllers\ProductController;
-use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return Inertia::render('Home');
@@ -57,3 +58,11 @@ Route::get('/change_password', function () {
 })->name('change_password_page');
 
 Route::post('/change_password', [UserController::class, 'change_password'])->name('change_password');
+
+
+// Admin routes
+Route::middleware([EnsureUserHasRole::class . ':admin'])->group(function () {
+    Route::get('/admin_panel', function () {
+        return Inertia::render('Admin/AdminPanel');
+    });
+});
