@@ -4,6 +4,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return Inertia::render('Home');
@@ -25,8 +26,8 @@ Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 
 Route::get('/verify_email/{email}/{token}', [UserController::class, 'verify_email'])->name('verify_email');
 
-Route::get('/email_verification_notice', function () {
-    return Inertia::render('EmailVerificationNotice');
+Route::get('/email_verification_notice', function (Request $request) {
+    return Inertia::render('EmailVerificationNotice', ['action' => $request->action]);
 })->name('email_verification_notice');
 
 Route::get('/reset_password', function () {
@@ -42,3 +43,17 @@ Route::post('/reset_password', [UserController::class, 'reset_password'])->name(
 Route::get('/shop', [ProductController::class, 'all_products_page'])->name('all_products_page');
 
 Route::get('/product/{product_id}', [ProductController::class, 'product_page'])->name('product_page');
+
+Route::get('/user_profile', [UserController::class, 'user_profile_page'])->name('user_profile_page');
+
+Route::get('/edit_personal_details', function () {
+    return Inertia::render('EditPersonalDetails');
+})->name('edit_personal_details_page');
+
+Route::post('/edit_personal_details', [UserController::class, 'edit_personal_details'])->name('edit_personal_details');
+
+Route::get('/change_password', function () {
+    return Inertia::render('ChangePassword');
+})->name('change_password_page');
+
+Route::post('/change_password', [UserController::class, 'change_password'])->name('change_password');

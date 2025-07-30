@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -25,42 +26,47 @@ class UserController extends Controller {
     // Register a new user
     public function register(Request $request) {
         // Register an unverified user (user has to verify his email to become a verified user)
+        try {
+            // Form validation
+            $form_data = $request->validate([
+                'name' => ['required', 'max:30'],
+                'surname' => ['required', 'max:30'],
+                'email' => ['required', 'email', 'max:50'],
+                'phone_number' => ['nullable', 'max:20'],
+                'profile_picture' => ['image', 'nullable', 'max:2048'],
+                // Password must be at least 6 characters long, have at least one lowercase and one uppercase letter, and must have either a number or a symbol
+                'password' => ['required', 'confirmed', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d\W]).+$/']
+            ]);
 
-        // Form validation
-        $form_data = $request->validate([
-            'name' => ['required', 'max:30'],
-            'surname' => ['required', 'max:30'],
-            'email' => ['required', 'email', 'max:50', 'unique:users'],
-            'phone_number' => ['nullable', 'max:20'],
-            'profile_picture' => ['image', 'nullable', 'max:2048'],
-            // Password must be at least 6 characters long, have at least one lowercase and one uppercase letter, and must have either a number or a symbol
-            'password' => ['required', 'confirmed', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d\W]).+$/']
-        ]);
+            // Save the profile picture to the server
+            if (isset($request['profile_picture']) and !empty($request['profile_picture'])) {
+                $profile_picture = $request->file('profile_picture');
+                $profile_picture_path = $profile_picture->store('profile_pictures', 'public');
+            }
 
-        // Save the profile picture to the server
-        if (isset($request['profile_picture']) and !empty($request['profile_picture'])) {
-            $profile_picture = $request->file('profile_picture');
-            $profile_picture_path = $profile_picture->store('profile_pictures', 'public');
+            $verification_token = Str::random(16);
+
+            // Save unverified user to the database
+            $unverified_user = User::create([
+                'name' => $form_data['name'],
+                'surname' => $form_data['surname'],
+                'email' => $form_data['email'],
+                'phone_number' => $form_data['phone_number'] ?? null,
+                'password_hash' => bcrypt($form_data['password']),
+                'verification_token_hash' => bcrypt($verification_token),
+                'password_reset_token_hash' => null,
+                'profile_picture_path' => $profile_picture_path ?? null
+            ]);
+
+            // Send an email confirmation link to user's email
+            $this->send_verification_email($unverified_user['email'], $verification_token);
+
+            return to_route('email_verification_notice', ['action' => 'register']);
+        } catch (QueryException $e) {
+            if ($e->getCode() === '45000') {
+                return back()->withErrors(['email' => 'This email is already confirmed by another user.'])->withInput();
+            }
         }
-
-        $verification_token = Str::random(16);
-
-        // Save unverified user to the database
-        $unverified_user = User::create([
-            'name' => $form_data['name'],
-            'surname' => $form_data['surname'],
-            'email' => $form_data['email'],
-            'phone_number' => $form_data['phone_number'] ?? null,
-            'password_hash' => bcrypt($form_data['password']),
-            'verification_token_hash' => bcrypt($verification_token),
-            'password_reset_token_hash' => null,
-            'profile_picture_path' => $profile_picture_path ?? null
-        ]);
-
-        // Send an email confirmation link to user's email
-        $this->send_verification_email($unverified_user['email'], $verification_token);
-
-        return to_route('email_verification_notice');
     }
 
     // Verify user's email after they have clicked the link from the email we sent
@@ -189,5 +195,76 @@ class UserController extends Controller {
         $user->update(['password_reset_token_hash' => null]);
 
         return to_route('home_page')->with('flash_message', "Your password has been successfully reset. You can now log in with your new password.");
+    }
+
+
+    public function user_profile_page() {
+        if (Auth::check()) {
+            return Inertia::render('UserProfile', ['user' => Auth::user()]);
+        } else {
+            return to_route('login_page');
+        }
+    }
+
+
+    public function edit_personal_details(Request $request) {
+        try {
+            // Form validation
+            $form_data = $request->validate([
+                'name' => ['required', 'max:30'],
+                'surname' => ['required', 'max:30'],
+                'email' => ['required', 'email', 'max:50'],
+                'phone_number' => ['nullable', 'max:20'],
+                'profile_picture' => ['image', 'nullable', 'max:2048'],
+            ]);
+
+            // Save the profile picture to the server
+            if (isset($request['profile_picture']) and !empty($request['profile_picture'])) {
+                $profile_picture = $request->file('profile_picture');
+                $profile_picture_path = $profile_picture->store('profile_pictures', 'public');
+            }
+
+            $verification_token = Str::random(16);
+
+            // Update user's information
+            $user = User::where('user_id', $request->user_id)->first();
+
+            $user->update([
+                'name' => $form_data['name'],
+                'surname' => $form_data['surname'],
+                'phone_number' => $form_data['phone_number'] ?? null,
+                'verification_token_hash' => bcrypt($verification_token),
+                'profile_picture_path' => $profile_picture_path ?? null
+            ]);
+
+            if ($user->email !== $form_data['email']) {
+
+                $user->update(['email' => $form_data['email']]);
+
+                // Send an email confirmation link to user's email
+                $this->send_verification_email($user['email'], $verification_token);
+
+                return to_route('email_verification_notice', ['action' => 'edit'])->with('flash_message', 'Personal details successfully updated!');
+            } else {
+                return to_route('user_profile_page')->with('flash_message', 'Personal details successfully updated!');
+            }
+        } catch (QueryException $e) {
+            if ($e->getCode() === '45000') {
+                return back()->withErrors(['email' => 'This email is already confirmed by another user.'])->withInput();
+            }
+        }
+    }
+
+
+    public function change_password(Request $request) {
+        // Password validation
+        $form_data = $request->validate([
+            // Password must be at least 6 characters long, have at least one lowercase and one uppercase letter, and must have either a number or a symbol
+            'password' => ['required', 'confirmed', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d\W]).+$/']
+        ]);
+
+        $user = User::where('user_id', $request->user_id)->first();
+        $user->update(['password_hash' => bcrypt($form_data['password'])]);
+        return to_route('user_profile_page')->with('flash_message', 'Password successfully changed!');
     }
 }
