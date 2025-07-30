@@ -61,7 +61,7 @@ class UserController extends Controller {
             // Send an email confirmation link to user's email
             $this->send_verification_email($unverified_user['email'], $verification_token);
 
-            return to_route('email_verification_notice');
+            return to_route('email_verification_notice', ['action' => 'register']);
         } catch (QueryException $e) {
             if ($e->getCode() === '45000') {
                 return back()->withErrors(['email' => 'This email is already confirmed by another user.'])->withInput();
@@ -203,6 +203,55 @@ class UserController extends Controller {
             return Inertia::render('UserProfile', ['user' => Auth::user()]);
         } else {
             return to_route('login_page');
+        }
+    }
+
+
+    public function edit_personal_details(Request $request) {
+        try {
+            // Form validation
+            $form_data = $request->validate([
+                'name' => ['required', 'max:30'],
+                'surname' => ['required', 'max:30'],
+                'email' => ['required', 'email', 'max:50'],
+                'phone_number' => ['nullable', 'max:20'],
+                'profile_picture' => ['image', 'nullable', 'max:2048'],
+            ]);
+
+            // Save the profile picture to the server
+            if (isset($request['profile_picture']) and !empty($request['profile_picture'])) {
+                $profile_picture = $request->file('profile_picture');
+                $profile_picture_path = $profile_picture->store('profile_pictures', 'public');
+            }
+
+            $verification_token = Str::random(16);
+
+            // Update user's information
+            $user = User::where('user_id', $request->user_id)->first();
+
+            $user->update([
+                'name' => $form_data['name'],
+                'surname' => $form_data['surname'],
+                'phone_number' => $form_data['phone_number'] ?? null,
+                'verification_token_hash' => bcrypt($verification_token),
+                'profile_picture_path' => $profile_picture_path ?? null
+            ]);
+
+            if ($user->email !== $form_data['email']) {
+
+                $user->update(['email' => $form_data['email']]);
+
+                // Send an email confirmation link to user's email
+                $this->send_verification_email($user['email'], $verification_token);
+
+                return to_route('email_verification_notice', ['action' => 'edit'])->with('flash_message', 'Personal details successfully updated!');
+            } else {
+                return to_route('user_profile_page')->with('flash_message', 'Personal details successfully updated!');
+            }
+        } catch (QueryException $e) {
+            if ($e->getCode() === '45000') {
+                return back()->withErrors(['email' => 'This email is already confirmed by another user.'])->withInput();
+            }
         }
     }
 }

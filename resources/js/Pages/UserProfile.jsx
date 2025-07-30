@@ -18,7 +18,7 @@ function UserProfile() {
 
             {!auth.user.email_confirmed &&
                 <div className="flex flex-row items-center gap-x-4 mb-8">
-                    <CiWarning className="text-5xl"/>
+                    <CiWarning className="text-5xl" />
                     <p>Your email address is not confirmed yet. In order to make purchases, you must confirm it. Check your inbox for the instructions.</p>
                 </div>
             }
@@ -27,7 +27,7 @@ function UserProfile() {
                 <div className="grid grid-cols-10 gap-x-4 gap-y-4 w-10/12">
                     {/* Name and profile picture */}
                     <div className="col-span-4 bg-gray-200 p-4 flex flex-col items-center gap-y-4 pb-16">
-                        <img className="w-1/4 rounded-full" src={"storage/" + auth.user.profile_picture_path ? "storage/" + auth.user.profile_picture_path : "profile_pictures/default.png"} alt="User's profile picture" />
+                        <img className="w-1/4 rounded-full" src={auth.user.profile_picture_path ? "storage/" + auth.user.profile_picture_path : "storage/profile_pictures/default.png"} alt="User's profile picture" />
                         <p className="text-xl">{auth.user.name} {auth.user.surname}</p>
                     </div>
 
@@ -61,7 +61,7 @@ function UserProfile() {
                             </div>
 
                             {/* Edit personal details button */}
-                            <button className="bg-black text-white p-2 rounded-md mt-8 shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition cursor-pointer">Edit personal details</button>
+                            <Link href="/edit_personal_details" className="bg-black text-white p-2 rounded-md mt-8 shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition cursor-pointer">Edit personal details</Link>
                         </div>
                     </div>
 

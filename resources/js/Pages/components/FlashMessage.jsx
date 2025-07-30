@@ -5,7 +5,7 @@ function FlashMessage(props) {
     useEffect(() => {
         setTimeout(() => {
             const flash_message = document.getElementById('flash_message');
-            flash_message.style.display = 'none';
+            if (flash_message) flash_message.style.display = 'none';
         }, 5000);
 
     });
