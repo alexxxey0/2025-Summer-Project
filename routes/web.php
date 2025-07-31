@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -63,6 +64,7 @@ Route::post('/change_password', [UserController::class, 'change_password'])->nam
 // Admin routes
 Route::middleware([EnsureUserHasRole::class . ':admin'])->group(function () {
     Route::get('/admin_panel', function () {
-        return Inertia::render('Admin/AdminPanel');
+        $users = User::all();
+        return Inertia::render('Admin/AdminPanel', ['users' => $users]);
     });
 });

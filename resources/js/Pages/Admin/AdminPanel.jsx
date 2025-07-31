@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ManageUsers from "./AdminPanelTabs/ManageUsers";
 
-function AdminPanel() {
+function AdminPanel(props) {
     const [selectedTab, setSelectedTab] = useState('manage_users');
 
     return (
@@ -10,7 +10,7 @@ function AdminPanel() {
 
             <div className="flex flex-row">
                 <div className="w-10/12">
-                    {selectedTab === 'manage_users' && <ManageUsers />}
+                    {selectedTab === 'manage_users' && <ManageUsers users={props.users}/>}
                 </div>
 
                 <div className="flex flex-col w-2/12 gap-y-2 text-lg *:cursor-pointer">
