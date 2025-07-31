@@ -1,8 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
+import ManageUsers from "./AdminPanelTabs/ManageUsers";
 
 function AdminPanel() {
+    const [selectedTab, setSelectedTab] = useState('manage_users');
+
     return (
-        <h1>ADMIN PANEL</h1>
+        <div className="w-10/12 mx-auto my-16">
+            <h1 className="font-bold text-4xl text-center mb-12">Administrator panel</h1>
+
+            <div className="flex flex-row">
+                <div className="w-10/12">
+                    {selectedTab === 'manage_users' && <ManageUsers />}
+                </div>
+
+                <div className="flex flex-col w-2/12 gap-y-2 text-lg *:cursor-pointer">
+                    <p className={selectedTab === 'manage_users' ? 'font-bold' : ''}>Manage users</p>
+                    <p>Manage products</p>
+                    <p>Manage reviews</p>
+                    <p>Manage orders</p>
+                    <p>Statistics</p>
+                </div>
+            </div>
+        </div>
     );
 }
 
