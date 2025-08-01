@@ -1,8 +1,33 @@
-import React from "react";
+import React, { useState } from "react";
 import AdminPanelInput from "../AdminPanelInput";
 import UsersTableRow from "../UsersTableRow";
 
 function ManageUsers(props) {
+
+    const [displayedUsers, setDisplayedUsers] = useState(props.users);
+
+    const handleSearch = (e) => {
+        const inputs = document.querySelectorAll('.search_users input'); // get all the inputs
+
+        let currentSearchParameters = {};
+        inputs.forEach((input) => {
+            // Get all the non-empty search parameters
+            if (input.value !== '') currentSearchParameters[input.name] = input.value;
+        });
+
+        // Filter the users down to only the ones that match the search parameters
+        const filtered_users = props.users.filter((user) => {
+            for (const [key, value] of Object.entries(currentSearchParameters)) {
+                // As all the search parameters here are not unique, we are searching using substring instead of exact match
+                // The search is case insensitive
+                if (!(user[key].toLowerCase().includes(value.toLowerCase()))) return false;
+            }
+            return true;
+        });
+
+        setDisplayedUsers(filtered_users);
+    }
+
     return (
         <div className="flex flex-col gap-y-12">
             <p>Click on a row to get more detailed information about a user and edit their information.</p>
@@ -11,12 +36,12 @@ function ManageUsers(props) {
             <div className="flex flex-row gap-x-8 items-end">
                 <div className="border-2 rounded-lg p-2">
                     <h1 className="font-bold mb-4 text-lg">Search users</h1>
-                    <div className="flex flex-col gap-y-4">
-                        <AdminPanelInput name="name" />
-                        <AdminPanelInput name="surname" />
-                        <AdminPanelInput name="email" />
-                        <AdminPanelInput name="phone_number" />
-                        <AdminPanelInput name="role" />
+                    <div className="search_users flex flex-col gap-y-4">
+                        <AdminPanelInput onChange={handleSearch} name="name" />
+                        <AdminPanelInput onChange={handleSearch} name="surname" />
+                        <AdminPanelInput onChange={handleSearch} name="email" />
+                        <AdminPanelInput onChange={handleSearch} name="phone_number" />
+                        <AdminPanelInput onChange={handleSearch} name="role" />
                     </div>
                 </div>
 
@@ -39,7 +64,7 @@ function ManageUsers(props) {
                     <p>Phone number</p>
                     <p>Role</p>
                 </div>
-                {props.users.map(user =>
+                {displayedUsers.map(user =>
                     <UsersTableRow user={user} key={user.user_id} />
                 )}
             </div>
