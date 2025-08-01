@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "@inertiajs/react";
 
 function UsersTableRow(props) {
     const [highlighted, setHighlighted] = useState(false);
@@ -12,25 +13,25 @@ function UsersTableRow(props) {
 
     if (highlighted) {
         return (
-            <div onMouseEnter={() => setHighlighted(true)} onMouseLeave={() => setHighlighted(false)} className="contents *:bg-gray-300 *:cursor-pointer *:p-2 *:overflow-x-scroll">
+            <Link href={'/user_profile/' + props.user.user_id} onMouseEnter={() => setHighlighted(true)} onMouseLeave={() => setHighlighted(false)} className="contents *:bg-gray-300 *:cursor-pointer *:p-2 *:overflow-x-scroll">
                 <p>{props.user.user_id}</p>
                 <p>{props.user.name}</p>
                 <p>{props.user.surname}</p>
                 <p>{props.user.email}</p>
                 <p>{props.user.phone_number}</p>
                 <p>{props.user.role}</p>
-            </div>
+            </Link>
         );
     } else {
         return (
-            <div onMouseEnter={() => setHighlighted(true)} onMouseLeave={() => setHighlighted(false)} className="contents *:bg-[#f5f5f5] *:p-2 *:overflow-x-scroll">
+            <Link href={'/user_profile/' + props.user.user_id} onMouseEnter={() => setHighlighted(true)} onMouseLeave={() => setHighlighted(false)} className="contents *:bg-[#f5f5f5] *:p-2 *:overflow-x-scroll">
                 <p>{props.user.user_id}</p>
                 <p>{props.user.name}</p>
                 <p>{props.user.surname}</p>
                 <p>{props.user.email}</p>
                 <p>{props.user.phone_number}</p>
                 <p>{props.user.role}</p>
-            </div>
+            </Link>
         );
     }
 }

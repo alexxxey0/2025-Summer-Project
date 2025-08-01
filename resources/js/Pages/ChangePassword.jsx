@@ -20,7 +20,7 @@ function ChangePassword() {
 
     return (
         <div className='mt-16'>
-            <Link href="/user_profile" className="ml-16 hover:underline text-lg">← Back to profile</Link>
+            <Link href="/my_profile" className="ml-16 hover:underline text-lg">← Back to profile</Link>
             <div className='register_form_with_title mt-12 mb-32 w-4/12 py-16 px-24 rounded-lg bg-gray-200 mx-auto'>
                 <h1 className='text-center text-3xl font-bold mb-8'>Change your password</h1>
 

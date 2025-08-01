@@ -6,7 +6,7 @@ function AdminPanel(props) {
 
     return (
         <div className="w-10/12 mx-auto my-16">
-            <h1 className="font-bold text-4xl text-center mb-12">Administrator panel</h1>
+            <h1 className="font-bold text-4xl text-center mb-12">Administrator's panel</h1>
 
             <div className="flex flex-row">
                 <div className="w-10/12">
