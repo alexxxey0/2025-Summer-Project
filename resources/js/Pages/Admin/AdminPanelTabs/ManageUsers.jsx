@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useForm } from '@inertiajs/react';
 import AdminPanelInput from "../AdminPanelInput";
 import UsersTableRow from "../UsersTableRow";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
@@ -9,6 +10,16 @@ function ManageUsers(props) {
     const [displayedUsers, setDisplayedUsers] = useState(props.users);
     const [pageCount, setPageCount] = useState(Math.ceil(displayedUsers.length / pageSize));
     const [currentPage, setCurrentPage] = useState(1);
+
+    // Form helper from Inertia documentation (https://www.inertiajs.com/forms)
+    const { data, setData, post, processing, errors } = useForm({
+        user_id: ''
+    });
+
+    function submit(e) {
+        e.preventDefault();
+        post('/get_user_by_id');
+    }
 
     const handleSearch = (e) => {
         const inputs = document.querySelectorAll('.search_users input'); // get all the inputs
@@ -66,12 +77,15 @@ function ManageUsers(props) {
                     </div>
                 </div>
 
-                <div className="flex flex-col">
+                <div className="flex flex-col gap-y-1">
                     <h1 className="font-bold text-lg">Get user directly by ID</h1>
-                    <div className="flex flex-row items-center gap-x-4">
-                        <AdminPanelInput name="user_id" type="number" />
-                        <button className="bg-black text-white px-4 text-lg rounded-lg shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition cursor-pointer">Get</button>
-                    </div>
+                    <form onSubmit={submit} className="flex flex-row items-center gap-x-4">
+                        <div className="flex flex-row gap-x-2">
+                            <label className="w-6/12" htmlFor="user_id">User ID</label>
+                            <input value={data.user_id} onChange={e => setData('user_id', e.target.value)} className="border-2 border-gray-300 rounded w-6/12" type="number" min="1" name="user_id" />
+                        </div>
+                        <button type="submit" className="bg-black text-white px-4 text-lg rounded-lg shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition cursor-pointer">Get</button>
+                    </form>
                 </div>
             </div>
 

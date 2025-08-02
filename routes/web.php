@@ -80,4 +80,6 @@ Route::middleware([EnsureUserHasRole::class . ':admin'])->group(function () {
     });
 
     Route::post('/edit_user', [AdminController::class, 'edit_user'])->name('edit_user');
+
+    Route::post('/get_user_by_id', [AdminController::class, 'get_user_by_id'])->name('get_user_by_id');
 });

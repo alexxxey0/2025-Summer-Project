@@ -66,4 +66,14 @@ class AdminController extends Controller {
             }
         }
     }
+
+
+    public function get_user_by_id(Request $request) {
+        $user_exists = User::where('user_id', $request->user_id)->exists();
+
+        if (!$user_exists) return redirect()->back()->with('flash_message', "User with this ID doesn't exist!");
+        else {
+            return to_route('user_profile_page', ['user_id' => $request->user_id]);
+        }
+    }
 }
