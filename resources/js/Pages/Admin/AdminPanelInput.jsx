@@ -7,7 +7,8 @@ function AdminPanelInput(props) {
         'email': 'Email address',
         'phone_number': 'Phone number',
         'role': 'Role',
-        'user_id': 'User ID'
+        'user_id': 'User ID',
+        'type': 'Type'
     };
 
     return (

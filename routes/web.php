@@ -2,12 +2,14 @@
 
 use App\Models\User;
 use Inertia\Inertia;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Middleware\EnsureUserHasRole;
 use App\Http\Controllers\ProductController;
+use App\Models\ProductVariant;
 
 Route::get('/', function () {
     return Inertia::render('Home');
@@ -66,7 +68,9 @@ Route::post('/change_password', [UserController::class, 'change_password'])->nam
 Route::middleware([EnsureUserHasRole::class . ':admin'])->group(function () {
     Route::get('/admin_panel', function () {
         $users = User::all();
-        return Inertia::render('Admin/AdminPanel', ['users' => $users]);
+        $products = Product::all();
+        $product_variants = ProductVariant::all();
+        return Inertia::render('Admin/AdminPanel', ['users' => $users, 'products' => $products, 'product_variants' => $product_variants]);
     });
 
     Route::get('/user_profile/{user_id}', function (Request $request) {
