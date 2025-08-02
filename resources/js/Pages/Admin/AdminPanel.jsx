@@ -8,7 +8,7 @@ function AdminPanel(props) {
         <div className="w-10/12 mx-auto my-16">
             <h1 className="font-bold text-4xl text-center mb-12">Administrator's panel</h1>
 
-            <div className="flex flex-row">
+            <div className="flex flex-row gap-x-2">
                 <div className="w-10/12">
                     {selectedTab === 'manage_users' && <ManageUsers users={props.users}/>}
                 </div>

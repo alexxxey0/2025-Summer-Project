@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import AdminPanelInput from "../AdminPanelInput";
 import UsersTableRow from "../UsersTableRow";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 function ManageUsers(props) {
 
+    const [pageSize, setPageSize] = useState(10);
     const [displayedUsers, setDisplayedUsers] = useState(props.users);
+    const [pageCount, setPageCount] = useState(Math.ceil(displayedUsers.length / pageSize));
+    const [currentPage, setCurrentPage] = useState(1);
 
     const handleSearch = (e) => {
         const inputs = document.querySelectorAll('.search_users input'); // get all the inputs
@@ -26,6 +30,23 @@ function ManageUsers(props) {
         });
 
         setDisplayedUsers(filtered_users);
+        setPageCount(Math.ceil(filtered_users.length / pageSize));
+        setCurrentPage(1);
+    }
+
+    function showNextPage() {
+        if (currentPage < pageCount) setCurrentPage(currentPage => currentPage + 1);
+    }
+
+    function showPreviousPage() {
+        if (currentPage >= 2) setCurrentPage(currentPage => currentPage - 1);
+    }
+
+    function changePageSize(e) {
+        const newPageSize = Number(e.target.value);
+        setPageSize(newPageSize);
+        setPageCount(Math.ceil(displayedUsers.length / newPageSize));
+        setCurrentPage(1);
     }
 
     return (
@@ -64,9 +85,22 @@ function ManageUsers(props) {
                     <p>Phone number</p>
                     <p>Role</p>
                 </div>
-                {displayedUsers.map(user =>
+
+                {displayedUsers.slice((currentPage - 1) * pageSize, ((currentPage - 1) * pageSize) + pageSize).map(user =>
                     <UsersTableRow user={user} key={user.user_id} />
                 )}
+            </div>
+
+            <div className="self-center flex flex-col items-center">
+                <p>Page {currentPage} of {pageCount}</p>
+                <div className="flex flex-row gap-x-2">
+                    <IoIosArrowBack onClick={showPreviousPage} className="text-3xl cursor-pointer" />
+                    <IoIosArrowForward onClick={showNextPage} className="text-3xl cursor-pointer" />
+                </div>
+                <div className="flex flex-row gap-x-1 justify-center items-center mt-4">
+                    <label htmlFor="users_per_page">Users per page:</label>
+                    <input className="border-2 rounded w-2/12 p-1" type="number" min="1" value={pageSize} onChange={changePageSize} />
+                </div>
             </div>
         </div>
     );
