@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Product;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -74,6 +75,16 @@ class AdminController extends Controller {
         if (!$user_exists) return redirect()->back()->with('flash_message', "User with this ID doesn't exist!");
         else {
             return to_route('user_profile_page', ['user_id' => $request->user_id]);
+        }
+    }
+
+
+    public function get_product_by_id(Request $request) {
+        $product_exists = Product::where('product_id', $request->product_id)->exists();
+
+        if (!$product_exists) return redirect()->back()->with('flash_message', "Product with this ID doesn't exist!");
+        else {
+            return to_route('edit_product_page', ['product_id' => $request->product_id]);
         }
     }
 }

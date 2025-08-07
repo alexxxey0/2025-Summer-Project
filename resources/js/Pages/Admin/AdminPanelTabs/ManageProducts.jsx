@@ -95,7 +95,6 @@ function ManageProducts(props) {
                     <p>Available sizes</p>
                     <p>Price</p>
                 </div>
-                {console.log(props.productVariants)}
 
                 {displayedProducts.slice((currentPage - 1) * pageSize, ((currentPage - 1) * pageSize) + pageSize).map(product =>
                     <ProductsTableRow

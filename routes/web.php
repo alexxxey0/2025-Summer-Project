@@ -66,12 +66,12 @@ Route::post('/change_password', [UserController::class, 'change_password'])->nam
 
 // Admin routes
 Route::middleware([EnsureUserHasRole::class . ':admin'])->group(function () {
-    Route::get('/admin_panel', function () {
+    Route::get('/admin_panel', function (Request $request) {
         $users = User::all();
         $products = Product::all();
         $product_variants = ProductVariant::all();
-        return Inertia::render('Admin/AdminPanel', ['users' => $users, 'products' => $products, 'product_variants' => $product_variants]);
-    });
+        return Inertia::render('Admin/AdminPanel', ['users' => $users, 'products' => $products, 'product_variants' => $product_variants, 'tab' => $request->tab]);
+    })->name('admin_panel');
 
     Route::get('/user_profile/{user_id}', function (Request $request) {
         $user = User::where('user_id', $request->user_id)->first();
@@ -86,4 +86,13 @@ Route::middleware([EnsureUserHasRole::class . ':admin'])->group(function () {
     Route::post('/edit_user', [AdminController::class, 'edit_user'])->name('edit_user');
 
     Route::post('/get_user_by_id', [AdminController::class, 'get_user_by_id'])->name('get_user_by_id');
+
+    Route::post('/get_product_by_id', [AdminController::class, 'get_product_by_id'])->name('get_product_by_id');
+
+    Route::get('/product/{product_id}/edit', function (Request $request) {
+        $product = Product::where('product_id', $request->product_id)->first();
+        $product_variants = ProductVariant::where('product_id', $request->product_id)->get();
+        $manage_products_link = route('admin_panel', ['tab' => 'manage_products']);
+        return Inertia::render('Admin/EditProduct', ['product' => $product, 'product_variants' => $product_variants, 'manage_products_link' => $manage_products_link]);
+    })->name('edit_product_page');
 });

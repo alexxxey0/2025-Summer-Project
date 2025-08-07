@@ -1,9 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ManageUsers from "./AdminPanelTabs/ManageUsers";
 import ManageProducts from "./AdminPanelTabs/ManageProducts";
 
 function AdminPanel(props) {
     const [selectedTab, setSelectedTab] = useState('manage_users');
+
+    useEffect(() => {
+        if (props.tab !== null && props.tab !== undefined) setSelectedTab(props.tab);
+    }, []);
+
 
     return (
         <div className="w-10/12 mx-auto my-16">
@@ -11,8 +16,8 @@ function AdminPanel(props) {
 
             <div className="flex flex-row gap-x-2">
                 <div className="w-10/12">
-                    {selectedTab === 'manage_users' && <ManageUsers users={props.users}/>}
-                    {selectedTab === 'manage_products' && <ManageProducts products={props.products} productVariants={props.product_variants}/>}
+                    {selectedTab === 'manage_users' && <ManageUsers users={props.users} />}
+                    {selectedTab === 'manage_products' && <ManageProducts products={props.products} productVariants={props.product_variants} />}
                 </div>
 
                 <div className="flex flex-col w-2/12 gap-y-2 text-lg *:cursor-pointer">

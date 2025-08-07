@@ -27,7 +27,7 @@ function ProductsTableRow(props) {
     props.productVariants.sort((a, b) => (weights[a.size] ? weights[a.size] : Number(a.size)) - (weights[b.size] ? weights[b.size] : Number(b.size)));
 
     return (
-        <Link href={'/product_profile/' + props.product.product_id} onMouseEnter={() => setHighlighted(true)} onMouseLeave={() => setHighlighted(false)} className={(highlighted ? '*:bg-gray-300 ' : '*:bg-[#f5f5f5] ') + "contents *:cursor-pointer *:p-2 *:overflow-x-scroll"}>
+        <Link href={'/product/' + props.product.product_id + '/edit'} onMouseEnter={() => setHighlighted(true)} onMouseLeave={() => setHighlighted(false)} className={(highlighted ? '*:bg-gray-300 ' : '*:bg-[#f5f5f5] ') + "contents *:cursor-pointer *:p-2 *:overflow-x-scroll"}>
             <p>{props.product.product_id}</p>
             <p>{props.product.name}</p>
             <p>{props.product.type}</p>
@@ -35,8 +35,8 @@ function ProductsTableRow(props) {
                 {props.productVariants.length === 0 ?
                     <span>No sizes available</span>
                     :
-                    props.productVariants.map(productVariant =>
-                        <span key={productVariant.product_variant_id}>{productVariant.size} ({productVariant.in_stock})<br /></span>
+                    props.productVariants.map((productVariant, index) =>
+                        <span key={productVariant.product_variant_id}>{productVariant.size} ({productVariant.in_stock}){index !== props.productVariants.length - 1 && <br />}</span>
                     )}
             </p>
             <p>{props.product.price} €</p>
