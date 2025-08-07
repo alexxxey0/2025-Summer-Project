@@ -46,8 +46,7 @@ function EditProduct(props) {
 
     function submit(e) {
         e.preventDefault();
-        //post('/edit_product');
-        console.log(data);
+        post('/edit_product');
     }
 
     return (

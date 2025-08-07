@@ -95,4 +95,6 @@ Route::middleware([EnsureUserHasRole::class . ':admin'])->group(function () {
         $manage_products_link = route('admin_panel', ['tab' => 'manage_products']);
         return Inertia::render('Admin/EditProduct', ['product' => $product, 'product_variants' => $product_variants, 'manage_products_link' => $manage_products_link]);
     })->name('edit_product_page');
+
+    Route::post('/edit_product', [AdminController::class, 'edit_product'])->name('edit_product');
 });

@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Product;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\ProductVariant;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\QueryException;
 
@@ -86,5 +87,60 @@ class AdminController extends Controller {
         else {
             return to_route('edit_product_page', ['product_id' => $request->product_id]);
         }
+    }
+
+
+    public function edit_product(Request $request) {
+
+        // Form validation
+        $request->validate([
+            'name' => ['required', 'max:100'],
+            'description' => ['required', 'max:2000'],
+            'price' => ['required', 'numeric', 'min:0', 'regex:/^\d+(\.\d{1,2})?$/'],
+            'type' => ['required', 'max:30'],
+            'color' => ['required', 'max:20'],
+            'manufacturer' => ['required', 'max:30'],
+            'gender' => ['required', 'max:1'],
+            'age_category' => ['required', 'max:10'],
+            'season' => ['required', 'max:10'],
+            'in_stock' => ['required', 'array'],
+            'in_stock.*' => ['required', 'integer', 'min:0']
+        ]);
+
+        $product = Product::where('product_id', $request->product_id)->first();
+        $product->update($request->except('in_stock'));
+
+        // Update the number of items of each size in stock
+        $in_stock = $request->in_stock;
+        foreach ($in_stock as $size => $items_in_stock) {
+            $size_exists = ProductVariant::where('product_id', $request->product_id)->where('size', $size)->exists();
+
+            // If there are no more items of the given size in stock that was in stock before, delete this size from the table
+            if ($items_in_stock === 0 and $size_exists) {
+                $product_variant = ProductVariant::where('product_id', $request->product_id)->where('size', $size)->first();
+                $product_variant->delete();
+                continue;
+            }
+
+            // If there are now >0 items in stock of a size that wasn't in stock before, add it to the table
+            if ($items_in_stock > 0 and !$size_exists) {
+                ProductVariant::create([
+                    'product_id' => $request->product_id,
+                    'size' => $size,
+                    'in_stock' => $items_in_stock
+                ]);
+                continue;
+            }
+
+            // Else (size is already in stock and we change it to a non-zero value) just update number of items in stock
+            if ($size_exists) {
+                $product_variant = ProductVariant::where('product_id', $request->product_id)->where('size', $size)->first();
+                $product_variant->update([
+                    'in_stock' => $items_in_stock
+                ]);
+            }
+        }
+
+        return to_route('admin_panel', ['tab' => 'manage_products'])->with('flash_message', "Product's information successfully updated!");
     }
 }
