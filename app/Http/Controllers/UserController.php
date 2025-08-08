@@ -198,7 +198,7 @@ class UserController extends Controller {
     }
 
 
-    public function user_profile_page() {
+    public function my_profile_page() {
         if (Auth::check()) {
             return Inertia::render('UserProfile', ['user' => Auth::user()]);
         } else {
@@ -218,23 +218,23 @@ class UserController extends Controller {
                 'profile_picture' => ['image', 'nullable', 'max:2048'],
             ]);
 
-            // Save the profile picture to the server
-            if (isset($request['profile_picture']) and !empty($request['profile_picture'])) {
-                $profile_picture = $request->file('profile_picture');
-                $profile_picture_path = $profile_picture->store('profile_pictures', 'public');
-            }
-
             $verification_token = Str::random(16);
 
             // Update user's information
             $user = User::where('user_id', $request->user_id)->first();
+
+            // Save the profile picture to the server
+            if (isset($request['profile_picture']) and !empty($request['profile_picture'])) {
+                $profile_picture = $request->file('profile_picture');
+                $profile_picture_path = $profile_picture->store('profile_pictures', 'public');
+            } else $profile_picture_path = $user->profile_picture_path;
 
             $user->update([
                 'name' => $form_data['name'],
                 'surname' => $form_data['surname'],
                 'phone_number' => $form_data['phone_number'] ?? null,
                 'verification_token_hash' => bcrypt($verification_token),
-                'profile_picture_path' => $profile_picture_path ?? null
+                'profile_picture_path' => $profile_picture_path
             ]);
 
             if ($user->email !== $form_data['email']) {
@@ -246,7 +246,7 @@ class UserController extends Controller {
 
                 return to_route('email_verification_notice', ['action' => 'edit'])->with('flash_message', 'Personal details successfully updated!');
             } else {
-                return to_route('user_profile_page')->with('flash_message', 'Personal details successfully updated!');
+                return to_route('my_profile_page')->with('flash_message', 'Personal details successfully updated!');
             }
         } catch (QueryException $e) {
             if ($e->getCode() === '45000') {
@@ -265,6 +265,6 @@ class UserController extends Controller {
 
         $user = User::where('user_id', $request->user_id)->first();
         $user->update(['password_hash' => bcrypt($form_data['password'])]);
-        return to_route('user_profile_page')->with('flash_message', 'Password successfully changed!');
+        return to_route('my_profile_page')->with('flash_message', 'Password successfully changed!');
     }
 }

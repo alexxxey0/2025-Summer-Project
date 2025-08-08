@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import SmallIcon from "./SmallIcon";
 import { Link } from "@inertiajs/react";
 import { usePage } from '@inertiajs/react';
+import { RiAdminFill } from "react-icons/ri";
 
 
 
@@ -89,8 +90,9 @@ function Header(props) {
                 </div>
 
                 {/* Icons */}
-                <div className="flex flex-row gap-x-4">
-                    <Link href="/user_profile"><SmallIcon src={asset_path + "/images/user_icon.svg"} alt="User icon" /> </Link>
+                <div className="flex flex-row gap-x-4 items-center">
+                    {auth.user && auth.user.role === 'admin' && <Link href="/admin_panel"><SmallIcon src={asset_path + "images/admin_icon.svg"} alt="Admin icon" /></Link>}
+                    <Link href="/my_profile"><SmallIcon src={asset_path + "/images/user_icon.svg"} alt="User icon" /> </Link>
                     <a href=""><SmallIcon src={asset_path + "images/search_icon.svg"} alt="Search icon" /> </a>
                     <a href=""><SmallIcon src={asset_path + "images/cart_icon.svg"} alt="Cart icon" /> </a>
                 </div>

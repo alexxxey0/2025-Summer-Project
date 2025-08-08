@@ -40,8 +40,7 @@ class ProductFactory extends Factory {
             'manufacturer' => $manufacturer,
             'gender' => fake()->randomElement($genders),
             'age_category' => fake()->randomElement($ageCategories),
-            'season' => $season,
-            'main_image_path' => 'products_images/random_product' . fake()->numberBetween(1, 5) . '.jpg'
+            'season' => $season
         ];
     }
 }

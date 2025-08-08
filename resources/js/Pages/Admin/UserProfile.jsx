@@ -4,22 +4,22 @@ import { Link } from "@inertiajs/react";
 import { FaXmark } from "react-icons/fa6";
 import { IoIosCheckmark } from "react-icons/io";
 import { CiWarning } from "react-icons/ci";
-import { format_date } from "../helpers";
+import { format_date } from "../../helpers";
 
 
-function UserProfile() {
-    const { auth } = usePage().props;
+function UserProfile(props) {
 
     const [selectedTab, setSelectedTab] = useState('personal_details');
+    const { asset_path } = usePage().props;
 
     return (
         <div className="flex flex-col w-10/12 mx-auto my-16">
-            <h1 className="font-bold text-2xl mb-6">My profile</h1>
+            <h1 className="font-bold text-2xl mb-6">User's profile</h1>
 
-            {!auth.user.email_confirmed &&
+            {!props.user.email_confirmed &&
                 <div className="flex flex-row items-center gap-x-4 mb-8">
                     <CiWarning className="text-5xl" />
-                    <p>Your email address is not confirmed yet. In order to make purchases, you must confirm it. Check your inbox for the instructions.</p>
+                    <p>User's email address is not confirmed yet.</p>
                 </div>
             }
 
@@ -27,8 +27,8 @@ function UserProfile() {
                 <div className="grid grid-cols-10 gap-x-4 gap-y-4 w-10/12">
                     {/* Name and profile picture */}
                     <div className="col-span-4 bg-gray-200 p-4 flex flex-col items-center gap-y-4 pb-16">
-                        <img className="w-1/4 rounded-full aspect-square" src={auth.user.profile_picture_path ? "storage/" + auth.user.profile_picture_path : "storage/profile_pictures/default.png"} alt="User's profile picture" />
-                        <p className="text-xl">{auth.user.name} {auth.user.surname}</p>
+                        <img className="w-1/4 rounded-full aspect-square" src={props.user.profile_picture_path ? asset_path + "storage/" + props.user.profile_picture_path : asset_path + "storage/profile_pictures/default.png"} alt="User's profile picture" />
+                        <p className="text-xl">{props.user.name} {props.user.surname}</p>
                     </div>
 
                     {/* Personal details */}
@@ -37,35 +37,36 @@ function UserProfile() {
                             <h1 className="text-xl font-bold">Personal information</h1>
 
                             <div className="grid grid-cols-2 gap-y-2 auto-rows-fr items-center">
+                                <p className="font-bold">User ID</p>
+                                <p>{props.user.user_id}</p>
                                 <p className="font-bold">Name</p>
-                                <p>{auth.user.name}</p>
+                                <p>{props.user.name}</p>
                                 <p className="font-bold">Surname</p>
-                                <p>{auth.user.surname}</p>
+                                <p>{props.user.surname}</p>
                                 <p className="font-bold">Email</p>
-                                {auth.user.email_confirmed ?
+                                {props.user.email_confirmed ?
                                     <div className="flex flex-row items-center text-green-500">
-                                        <p>{auth.user.email}</p>
+                                        <p>{props.user.email}</p>
                                         <IoIosCheckmark className="text-4xl" />
 
                                     </div>
                                     :
                                     <div className="flex flex-row items-center text-red-500 gap-x-2">
-                                        <p>{auth.user.email}</p>
+                                        <p>{props.user.email}</p>
                                         <FaXmark className="text-xl" />
                                     </div>
                                 }
                                 <p className="font-bold">Phone number</p>
-                                <p>{auth.user.phone_number ? auth.user.phone_number : "Not provided"}</p>
+                                <p>{props.user.phone_number ? props.user.phone_number : "Not provided"}</p>
                                 <p className="font-bold">Registration date</p>
-                                <p>{format_date(auth.user.created_at)}</p>
+                                <p>{format_date(props.user.created_at)}</p>
+                                <p className="font-bold">Role</p>
+                                <p>{props.user.role}</p>
                             </div>
 
                             <div className="flex flex-col gap-y-2 mt-8 text-center">
                                 {/* Edit personal details button */}
-                                <Link href="/edit_personal_details" className="bg-black text-white p-2 rounded-md shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition cursor-pointer">Edit personal details</Link>
-
-                                {/* Change password button */}
-                                <Link href="/change_password" className="bg-black text-white p-2 rounded-md shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition cursor-pointer">Change password</Link>
+                                <Link href={"/user_profile/" + props.user.user_id + "/edit"} className="bg-black text-white p-2 rounded-md shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition cursor-pointer">Edit user's personal details</Link>
                             </div>
                         </div>
                     </div>
@@ -73,9 +74,9 @@ function UserProfile() {
                 </div>
 
                 <div className="flex flex-col gap-y-2 w-2/12 text-lg">
-                    <Link className={selectedTab === 'personal_details' ? 'font-bold' : ''}>Personal details</Link>
-                    <Link className={selectedTab === 'order_history' ? 'font-bold' : ''}>Order history</Link>
-                    <Link className={selectedTab === 'my_reviews' ? 'font-bold' : ''}>My reviews</Link>
+                    <Link className={selectedTab === 'personal_details' ? 'font-bold' : ''}>User's personal details</Link>
+                    <Link className={selectedTab === 'order_history' ? 'font-bold' : ''}>User's order history</Link>
+                    <Link className={selectedTab === 'reviews' ? 'font-bold' : ''}>User's reviews</Link>
                 </div>
             </div>
         </div>
