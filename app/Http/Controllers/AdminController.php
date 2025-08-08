@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Product;
+use App\Models\ProductImage;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\ProductVariant;
@@ -142,5 +143,57 @@ class AdminController extends Controller {
         }
 
         return to_route('admin_panel', ['tab' => 'manage_products'])->with('flash_message', "Product's information successfully updated!");
+    }
+
+
+    public function add_product(Request $request) {
+
+        // Form validation
+        $request->validate([
+            'name' => ['required', 'max:100'],
+            'description' => ['required', 'max:2000'],
+            'price' => ['required', 'numeric', 'min:0', 'regex:/^\d+(\.\d{1,2})?$/'],
+            'type' => ['required', 'max:30'],
+            'color' => ['required', 'max:20'],
+            'manufacturer' => ['required', 'max:30'],
+            'gender' => ['required', 'max:1'],
+            'age_category' => ['required', 'max:10'],
+            'season' => ['required', 'max:10'],
+            'in_stock' => ['required', 'array'],
+            'in_stock.*' => ['required', 'integer', 'min:0'],
+            'images' => ['required', 'array'],
+            'images.*.file' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'main_image_index' => ['required', 'numeric', 'min:0']
+        ]);
+
+        $product = Product::create($request->except(['in_stock', 'images', 'main_image_index']));
+
+        // Add all the sizes with >0 items in stock to the product_variants table
+        $in_stock = $request->in_stock;
+        foreach ($in_stock as $size => $items_in_stock) {
+            if ($items_in_stock > 0) {
+                ProductVariant::create([
+                    'product_id' => $product->product_id,
+                    'size' => $size,
+                    'in_stock' => $items_in_stock
+                ]);
+            }
+        }
+
+        // Handling uploaded images
+        $images = $request->images;
+        for ($i = 0; $i < count($images); $i++) {
+            // Save the image to the server
+            $image_path = $images[$i]['file']->store('product_images', 'public');
+
+            // Create a new record in product_images table
+            ProductImage::create([
+                'product_id' => $product->product_id,
+                'image_path' => $image_path,
+                'main_image' => $i === intval($request->main_image_index)
+            ]);
+        }
+
+        return to_route('admin_panel', ['tab' => 'manage_products'])->with('flash_message', "New product successfully added!");
     }
 }

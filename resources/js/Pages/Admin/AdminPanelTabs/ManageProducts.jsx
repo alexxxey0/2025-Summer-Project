@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useForm } from '@inertiajs/react';
+import { Link } from "@inertiajs/react";
 import AdminPanelInput from "../AdminPanelInput";
 import ProductsTableRow from "../ProductsTableRow";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
@@ -85,6 +86,8 @@ function ManageProducts(props) {
                     </form>
                 </div>
             </div>
+
+            <Link href="/add_new_product_page" className="flex flex-row items-center gap-x-2 w-2/12 bg-black text-white px-4 py-2 text-xl rounded-lg shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition cursor-pointer">+ Add new product</Link>
 
             {/* Products table */}
             <div className="grid grid-cols-5 bg-[#5b5b5b]  *:p-2 *:overflow-x-scroll gap-0.5 border-2 border-[#5b5b5b] rounded">

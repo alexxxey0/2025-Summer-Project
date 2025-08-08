@@ -26,7 +26,7 @@ class ProductImageFactory extends Factory {
 
         return [
             'product_id' => $product_id,
-            'image_path' => 'products_images/random_product' . fake()->numberBetween(1, 5) . '.jpg',
+            'image_path' => 'product_images/random_product' . fake()->numberBetween(1, 5) . '.jpg',
             'main_image' => $main_image_exists ? false : true
         ];
     }

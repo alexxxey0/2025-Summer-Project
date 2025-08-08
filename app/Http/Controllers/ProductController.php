@@ -14,7 +14,7 @@ class ProductController extends Controller {
 
         for ($i = 0; $i < count($products); $i++) {
             $main_image = ProductImage::where('product_id', $products[$i]->product_id)->where('main_image', true)->first();
-            $products[$i]['main_image_path'] = asset('images/' . $main_image->image_path);
+            $products[$i]['main_image_path'] = asset("storage/" . $main_image->image_path);
         }
 
         $filter_columns = ['type', 'manufacturer', 'color', 'gender', 'age_category', 'season'];
@@ -34,7 +34,7 @@ class ProductController extends Controller {
     public function product_page(Request $request) {
         $product = Product::where('product_id', $request->product_id)->first();
         $main_image = ProductImage::where('product_id', $request->product_id)->where('main_image', true)->first();
-        $product['main_image_path'] = asset('images/' . $main_image->image_path);
+        $product['main_image_path'] = asset("storage/" . $main_image->image_path);
 
         $in_stock = array();
         $product_variants = ProductVariant::where('product_id', $request->product_id)->get();

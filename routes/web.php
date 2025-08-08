@@ -97,4 +97,11 @@ Route::middleware([EnsureUserHasRole::class . ':admin'])->group(function () {
     })->name('edit_product_page');
 
     Route::post('/edit_product', [AdminController::class, 'edit_product'])->name('edit_product');
+
+    Route::get('/add_new_product_page', function () {
+        $manage_products_link = route('admin_panel', ['tab' => 'manage_products']);
+        return Inertia::render('Admin/AddNewProduct', ['manage_products_link' => $manage_products_link]);
+    });
+
+    Route::post('/add_product', [AdminController::class, 'add_product'])->name('add_product');
 });
