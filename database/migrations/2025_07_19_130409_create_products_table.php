@@ -20,7 +20,6 @@ return new class extends Migration {
             $table->char('gender', 1)->nullable(); // M/F
             $table->string('age_category', 10)->nullable(); // kid/adult
             $table->string('season', 10)->nullable(); // summer/winter
-            $table->string('main_image_path', 100)->default('product_images/default_product.webp');
             $table->timestamps(); // created_at & updated_at
         });
     }
