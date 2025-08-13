@@ -3,13 +3,14 @@
 use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Product;
+use App\Models\ProductImage;
 use Illuminate\Http\Request;
+use App\Models\ProductVariant;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Middleware\EnsureUserHasRole;
 use App\Http\Controllers\ProductController;
-use App\Models\ProductVariant;
 
 Route::get('/', function () {
     return Inertia::render('Home');
@@ -93,7 +94,8 @@ Route::middleware([EnsureUserHasRole::class . ':admin'])->group(function () {
         $product = Product::where('product_id', $request->product_id)->first();
         $product_variants = ProductVariant::where('product_id', $request->product_id)->get();
         $manage_products_link = route('admin_panel', ['tab' => 'manage_products']);
-        return Inertia::render('Admin/EditProduct', ['product' => $product, 'product_variants' => $product_variants, 'manage_products_link' => $manage_products_link]);
+        $images = ProductImage::where('product_id', $request->product_id)->get();
+        return Inertia::render('Admin/EditProduct', ['product' => $product, 'product_variants' => $product_variants, 'manage_products_link' => $manage_products_link, 'images' => $images]);
     })->name('edit_product_page');
 
     Route::post('/edit_product', [AdminController::class, 'edit_product'])->name('edit_product');
