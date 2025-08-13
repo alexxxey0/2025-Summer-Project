@@ -126,6 +126,7 @@ function ManageProducts(props) {
                     <div className="search_products flex flex-col gap-y-4">
                         <AdminPanelInput onChange={handleSearch} name="name" />
                         <AdminPanelInput onChange={handleSearch} name="type" />
+                        <AdminPanelInput onChange={handleSearch} name="manufacturer" />
 
                         <div className="flex flex-col gap-y-4 mt-4">
                             <p>Price</p>
@@ -163,11 +164,12 @@ function ManageProducts(props) {
             <Link href="/add_new_product_page" className="flex flex-row items-center gap-x-2 w-6/12 xl:w-2/12 bg-black text-white px-4 py-2 text-xl rounded-lg shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition cursor-pointer">+ Add new product</Link>
 
             {/* Products table */}
-            <div className="grid grid-cols-5 bg-[#5b5b5b]  *:p-2 *:overflow-x-scroll gap-0.5 border-2 border-[#5b5b5b] rounded">
+            <div className="grid grid-cols-6 bg-[#5b5b5b]  *:p-2 *:overflow-x-scroll gap-0.5 border-2 border-[#5b5b5b] rounded">
                 <div className="contents *:bg-[#f5f5f5] *:p-2 font-bold text-base">
                     <p>Product ID</p>
                     <p>Name</p>
                     <p>Type</p>
+                    <p>Manufacturer</p>
                     <p>Available sizes</p>
                     <p>Price</p>
                 </div>

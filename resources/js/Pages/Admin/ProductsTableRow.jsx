@@ -31,6 +31,7 @@ function ProductsTableRow(props) {
             <p>{props.product.product_id}</p>
             <p>{props.product.name}</p>
             <p>{props.product.type}</p>
+            <p>{props.product.manufacturer}</p>
             <p>
                 {props.productVariants.length === 0 ?
                     <span>No sizes available</span>
