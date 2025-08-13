@@ -6,9 +6,6 @@ import { FaRegTrashAlt } from "react-icons/fa";
 
 function AddProduct(props) {
 
-    //const [image, setImage] = useState(null);
-    //const [preview, setPreview] = useState(null);
-
     const [images, setImages] = useState([{ 'file': null, 'preview': null }]);
     const [mainImageIndex, setMainImageIndex] = useState(0);
 

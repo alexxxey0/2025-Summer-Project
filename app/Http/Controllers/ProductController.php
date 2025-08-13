@@ -13,7 +13,13 @@ class ProductController extends Controller {
         $products = Product::all();
 
         for ($i = 0; $i < count($products); $i++) {
-            $main_image = ProductImage::where('product_id', $products[$i]->product_id)->where('main_image', true)->first();
+            $main_image_exists = ProductImage::where('product_id', $products[$i]->product_id)->where('main_image', true)->exists();
+            if ($main_image_exists) {
+                $main_image = ProductImage::where('product_id', $products[$i]->product_id)->where('main_image', true)->first();
+            } else {
+                // If no image is marked as the main image, select the first image as the main image
+                $main_image = ProductImage::where('product_id', $products[$i]->product_id)->first();
+            }
             $products[$i]['main_image_path'] = asset("storage/" . $main_image->image_path);
         }
 
