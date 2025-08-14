@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CartItem;
+use App\Models\ProductVariant;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Inertia\Inertia;
@@ -10,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Intervention\Image\Colors\Rgb\Channels\Red;
 
 class UserController extends Controller {
     // Send an email verification email
@@ -267,4 +270,19 @@ class UserController extends Controller {
         $user->update(['password_hash' => bcrypt($form_data['password'])]);
         return to_route('my_profile_page')->with('flash_message', 'Password successfully changed!');
     }
+
+
+    public function add_to_cart(Request $request) {
+        $user = Auth::user();
+        $product_variant = ProductVariant::where('product_id', $request->product_id)->where('size', $request->size)->first();
+
+        CartItem::create([
+            'product_variant_id' => $product_variant->product_variant_id,
+            'user_id' => $user->user_id,
+            'quantity' => $request->quantity
+        ]);
+
+        return back()->with('flash_message', 'Product successfully added to cart!');
+    }
+
 }

@@ -8,7 +8,7 @@ import { RiAdminFill } from "react-icons/ri";
 
 function Header(props) {
     const [isOpen, setIsOpen] = useState(false);
-    const { auth } = usePage().props
+    const { auth } = usePage().props;
     const { asset_path } = usePage().props;
 
     return (

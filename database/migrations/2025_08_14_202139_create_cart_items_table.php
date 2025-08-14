@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id('cart_item_id');
             $table->unsignedBigInteger('product_variant_id');
             $table->unsignedInteger('user_id');
+            $table->tinyInteger('quantity');
             $table->timestamps();
 
             $table->foreign('product_variant_id')->references('product_variant_id')->on('product_variants')->onDelete('cascade');
