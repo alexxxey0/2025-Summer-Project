@@ -29,7 +29,24 @@ function Product({ product }) {
     }
 
     function add_to_cart() {
-        // TODO
+        // Step 1: Retrieve and parse the existing array
+        let cartItems = JSON.parse(sessionStorage.getItem('cartItems')) || [];
+
+        // Step 2: Create the new object you want to append
+        const cartItem = {
+            product_id: product.product_id,
+            name: product.name,
+            size: selectedSize,
+            pricePerItem: product.price,
+            quantity: quantity,
+            totalPrice: Number(product.price) * quantity,
+        };
+
+        // Step 3: Push the new object into the array
+        cartItems.push(cartItem);
+
+        // Step 4: Save the updated array back to sessionStorage
+        sessionStorage.setItem('cartItems', JSON.stringify(cartItems));
     }
 
     return (
