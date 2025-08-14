@@ -71,6 +71,32 @@ function Cart() {
                     </Link>
                 </div>
 
+                <div className="flex flex-row gap-x-6 justify-center mt-20">
+                    <div className="flex flex-col items-center text-2xl">
+                        <h1 className="font-bold">1</h1>
+                        <h2>Shopping Cart</h2>
+                    </div>
+
+                    <div className="flex flex-row items-center text-3xl">
+                        <p>. . . . . . . . . . . .</p>
+                    </div>
+
+                    <div className="flex flex-col items-center text-2xl text-gray-400">
+                        <h1 className="font-bold">2</h1>
+                        <h2>Shipping</h2>
+                    </div>
+
+                    <div className="flex flex-row items-center text-3xl text-gray-400">
+                        <p>. . . . . . . . . . . .</p>
+                    </div>
+
+                    <div className="flex flex-col items-center text-2xl text-gray-400">
+                        <h1 className="font-bold">3</h1>
+                        <h2>Payment</h2>
+                    </div>
+
+                </div>
+
             </div>
         </div>
     );
