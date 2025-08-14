@@ -64,6 +64,10 @@ Route::get('/change_password', function () {
 
 Route::post('/change_password', [UserController::class, 'change_password'])->name('change_password');
 
+Route::get('/cart', function () {
+    return Inertia::render('Cart');
+})->name('cart');
+
 
 // Admin routes
 Route::middleware([EnsureUserHasRole::class . ':admin'])->group(function () {

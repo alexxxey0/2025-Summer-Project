@@ -33,7 +33,7 @@ function Header(props) {
                     {auth.user && <p className="text-gray-500">Welcome, {auth.user.name} {auth.user.surname}!</p>}
                     <div className="w-[10%] flex flex-row justify-around items-center gap-x-2">
                         <a className="border-12 border-l-0 border-transparent" href="">Contact</a>
-                        <a className="border-12 border-transparent" href="">Cart</a>
+                        <Link href="/cart" className="border-12 border-transparent">Cart</Link>
                         {auth.user ?
                             <Link href="/logout" className="border-12 border-transparent whitespace-nowrap">Log out</Link>
                             :
