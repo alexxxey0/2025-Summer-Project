@@ -4,12 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Product;
-use App\Models\ProductImage;
 use Illuminate\Support\Str;
+use App\Models\ProductImage;
 use Illuminate\Http\Request;
 use App\Models\ProductVariant;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\QueryException;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\MediaType;
+use Intervention\Image\Encoders\JpegEncoder;
 
 class AdminController extends Controller {
 
@@ -105,11 +109,14 @@ class AdminController extends Controller {
             'age_category' => ['required', 'max:10'],
             'season' => ['required', 'max:10'],
             'in_stock' => ['required', 'array'],
-            'in_stock.*' => ['required', 'integer', 'min:0']
+            'in_stock.*' => ['required', 'integer', 'min:0'],
+            'images' => ['required', 'array'],
+            'images.*.file' => ['required', 'file', 'mimes:jpg,jpeg,png,webp,avif', 'max:5120'],
+            'main_image_index' => ['required', 'numeric', 'min:0']
         ]);
 
         $product = Product::where('product_id', $request->product_id)->first();
-        $product->update($request->except('in_stock'));
+        $product->update($request->except(['in_stock', 'images', 'main_image_index']));
 
         // Update the number of items of each size in stock
         $in_stock = $request->in_stock;
@@ -142,12 +149,56 @@ class AdminController extends Controller {
             }
         }
 
+        // Handling uploaded/deleted images
+        $images = $request->images;
+
+        // Paths of new images (after editing)
+        $images_paths = array_map(fn($image) => $image['path'], $images);
+
+        $old_images = ProductImage::where('product_id', $request->product_id)->get();
+        // Paths of old images (before editing)
+        $old_images_paths = ProductImage::where('product_id', $request->product_id)->pluck('image_path')->toArray();
+
+        // Delete images from the server that the user has deleted
+        for ($i = 0; $i < count($old_images); $i++) {
+            // If old image is not in the new array, it means it was deleted by the user
+            if (!in_array($old_images[$i]['image_path'], $images_paths)) {
+                if (file_exists(public_path('storage/' . $old_images[$i]['image_path']))) {
+                    unlink(public_path('storage/' . $old_images[$i]['image_path']));
+                }
+                // Delete the database record too
+                ProductImage::where('product_image_id', $old_images[$i]['product_image_id'])->delete();
+            }
+        }
+
+        for ($i = 0; $i < count($images); $i++) {
+            // Save the image to the server if it doesn't exist yet
+            // If the new image is not in the old array, it means it was uploaded by the user
+            if (!in_array($images[$i]['path'], $old_images_paths)) {
+                $image_path = $images[$i]['file']->store('product_images', 'public');
+
+                // Create a new record in product_images table
+                ProductImage::create([
+                    'product_id' => $product->product_id,
+                    'image_path' => $image_path,
+                    'main_image' => $i === intval($request->main_image_index)
+                ]);
+            } else {
+                // In case the new main image is one of the old images
+                $image_record = ProductImage::where('product_id', $request->product_id)->where('image_path', $images[$i]['path'])->first();
+                if ($i === intval($request->main_image_index)) {
+                    $image_record->update(['main_image' => true]);
+                } else {
+                    $image_record->update(['main_image' => false]);
+                }
+            }
+        }
+
         return to_route('admin_panel', ['tab' => 'manage_products'])->with('flash_message', "Product's information successfully updated!");
     }
 
 
     public function add_product(Request $request) {
-
         // Form validation
         $request->validate([
             'name' => ['required', 'max:100'],
@@ -162,7 +213,7 @@ class AdminController extends Controller {
             'in_stock' => ['required', 'array'],
             'in_stock.*' => ['required', 'integer', 'min:0'],
             'images' => ['required', 'array'],
-            'images.*.file' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'images.*.file' => ['required', 'file', 'mimes:jpg,jpeg,png,webp,avif', 'max:5120'],
             'main_image_index' => ['required', 'numeric', 'min:0']
         ]);
 

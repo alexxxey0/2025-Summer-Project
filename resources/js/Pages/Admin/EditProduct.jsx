@@ -1,9 +1,114 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { usePage } from '@inertiajs/react';
 import { useForm } from '@inertiajs/react';
 import { Link } from "@inertiajs/react";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 function EditProduct(props) {
+    const { asset_path } = usePage().props;
+    const [images, setImages] = useState([]);
+    const [mainImageIndex, setMainImageIndex] = useState(0);
+
+    async function getImageFileFromUrl(url) {
+        const response = await fetch(url);
+        const data = await response.blob();
+
+        // Get MIME type dynamically
+        const mimeType = response.headers.get('Content-Type') || data.type || 'application/octet-stream';
+        console.log(mimeType);
+
+        // Extract filename from URL
+        const filename = (() => {
+            try {
+                const pathname = new URL(url).pathname;
+                const name = pathname.substring(pathname.lastIndexOf('/') + 1);
+                return name || 'file';
+            } catch {
+                return 'file';
+            }
+        })();
+
+        // Create File with dynamic type and filename
+        return new File([data], filename, { type: mimeType });
+    }
+
+    let fetchedImages = [];
+    async function createImages() {
+        for (let i = 0; i < props.images.length; i++) {
+            const file = await getImageFileFromUrl(asset_path + "/storage/" + props.images[i].image_path);
+            const preview = URL.createObjectURL(file);
+            if (props.images[i].main_image) setMainImageIndex(i);
+            fetchedImages.push({ 'file': file, 'preview': preview, 'path': props.images[i].image_path });
+        }
+        setImages(fetchedImages);
+        setData(data => ({
+            ...data,
+            images: fetchedImages
+        }));
+    }
+
+    useEffect(() => {
+        createImages();
+        //console.log(fetchedImages);
+    }, []);
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        const preview = URL.createObjectURL(file);
+        const image = { 'file': file, 'preview': preview, 'path': null };
+
+        setImages(images => {
+            const updatedImages = [...images];
+            updatedImages[e.target.dataset.index] = image;
+            return updatedImages;
+        });
+
+        setData(data => ({
+            ...data,
+            images: [
+                ...data.images,
+                image
+            ]
+        }));
+    };
+
+    function handleMainImageChange(e) {
+        const updatedMainImageIndex = Number(e.target.dataset.index)
+        setMainImageIndex(updatedMainImageIndex);
+        setData('main_image_index', updatedMainImageIndex);
+    }
+
+
+    useEffect(() => {
+        console.log(images);
+        console.log(mainImageIndex);
+    }, [images]);
+
+
+    function addImageInput() {
+        setImages(images => [...images, { 'file': null, 'preview': null, 'path': null }]);
+    }
+
+    function removeImageInput(e) {
+        if (images.length > 1) {
+            const indexToRemove = Number(e.currentTarget.dataset.index);
+            const imagesAfterRemoving = images.filter((_, i) => i !== indexToRemove);
+            console.log(indexToRemove, mainImageIndex);
+            setImages(imagesAfterRemoving);
+            setData(data => ({
+                ...data,
+                images: imagesAfterRemoving
+            }));
+            if (indexToRemove === mainImageIndex) {
+                setMainImageIndex(0);
+                setData('main_image_index', 0);
+            }
+            if (mainImageIndex > indexToRemove) {
+                setMainImageIndex(mainImageIndex => mainImageIndex - 1);
+                setData('main_image_index', mainImageIndex - 1);
+            }
+        }
+    }
 
     let weights = {
         'XXS': 1,
@@ -41,11 +146,14 @@ function EditProduct(props) {
         gender: props.product.gender,
         age_category: props.product.age_category,
         season: props.product.season,
-        in_stock: in_stock
+        in_stock: in_stock,
+        images: [],
+        main_image_index: 0
     });
 
     function submit(e) {
         e.preventDefault();
+        console.log(data);
         post('/edit_product');
     }
 
@@ -114,6 +222,37 @@ function EditProduct(props) {
                         <label htmlFor="season">Season<span className='text-red-500'>*</span></label>
                         <input className='p-1 border-1 border-black rounded-md' type="text" name="season" required value={data.season} onChange={e => setData('season', e.target.value)} />
                         {errors.season && <div>{errors.season}</div>}
+                    </div>
+
+                    <div className="mt-4">
+                        <p className="mb-2">Upload one or more images<span className='text-red-500'>*</span></p>
+                        <p className="mb-2">Click on the image that you want to act as product's main (title) image.</p>
+                        <div className="flex flex-col gap-y-4">
+                            {images.length > 0 ?
+
+                                images.map((image, index) =>
+                                    <div className="flex flex-row gap-x-2" key={index}>
+                                        <input id={'image' + index} data-index={index} className="w-4/12 cursor-pointer p-1 border-1 border-black rounded-md h-min" type="file" accept="image/*" onChange={handleImageChange} />
+                                        {images[index].preview && (
+                                            <img
+                                                src={images[index].preview}
+                                                data-index={index}
+                                                alt="Image preview"
+                                                className={(index === mainImageIndex ? "border-4 border-red-500 rounded-md " : "") + "w-3/12 cursor-pointer"}
+                                                onClick={handleMainImageChange}
+                                            />
+                                        )}
+                                        {index > 0 && <FaRegTrashAlt data-index={index} onClick={removeImageInput} className="text-2xl cursor-pointer" />}
+                                    </div>
+                                )
+
+                                :
+                                <div className="flex flex-row gap-x-2" key={0}>
+                                    <input id={'image0'} className="cursor-pointer p-1 border-1 border-black rounded-md h-min" type="file" accept="image/*" onChange={handleImageChange} />
+                                </div>
+                            }
+                        </div>
+                        <button onClick={addImageInput} type="button" className='bg-black text-white p-2 rounded-md w-3/12 mx-auto mt-8 shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition cursor-pointer'>+ Add another image</button>
                     </div>
 
                     <p className="mt-8 text-lg">In stock:</p>

@@ -1,0 +1,38 @@
+/* Track color (filled part) */
+.rc-slider-track {
+  background-color: black;
+}
+
+/* Rail color (unfilled part) */
+.rc-slider-rail {
+  background-color: lightgray;
+}
+
+/* Handle (thumb) color */
+.rc-slider-handle {
+  border: solid 2px black;
+  background-color: black;
+}
+
+/* All dots */
+.rc-slider-dot {
+  border: 2px solid lightgray; /* circle border color */
+  background-color: white; /* fill color */
+}
+
+/* Active dots (between handles) */
+.rc-slider-dot-active {
+  border: 2px solid black; /* circle border color */
+  background-color: white; /* fill color */
+}
+
+/* Handle on hover */
+.rc-slider-handle:hover {
+  border-color: black; /* new border color on hover */
+}
+
+.rc-slider-handle-dragging {
+  box-shadow: none !important;
+  border-color: black !important;
+}
+
