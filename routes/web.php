@@ -68,6 +68,10 @@ Route::get('/cart', function () {
     return Inertia::render('Cart');
 })->name('cart');
 
+Route::get('/cart/shipping', function () {
+    return Inertia::render('Shipping');
+})->name('shipping');
+
 // Routes for authenticated users
 Route::middleware(['auth'])->group(function () {
     Route::post('/add_to_cart', [UserController::class, 'add_to_cart'])->name('add_to_cart');
