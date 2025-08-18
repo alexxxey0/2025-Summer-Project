@@ -48,23 +48,30 @@ function Product({ product }) {
     }
 
     function addCartItemSession() {
-        // Step 1: Retrieve and parse the existing array
+        // Retrieve and parse the existing array
         let cartItems = JSON.parse(sessionStorage.getItem('cartItems')) || [];
 
-        // Step 2: Create the new object you want to append
+        let maxId = 0;
+        if (cartItems.length > 0) {
+            maxId = Math.max(...cartItems.map(cartItem => cartItem.cart_item_id));
+        }
+
+        // Create the new object you want to append
         const cartItem = {
             product_id: product.product_id,
             name: product.name,
             size: selectedSize,
-            pricePerItem: product.price,
+            price: product.price,
             quantity: quantity,
-            totalPrice: Number(product.price) * quantity
+            total_price: Number(product.price) * quantity,
+            image_path: product.main_image_path,
+            cart_item_id: maxId + 1
         };
 
-        // Step 3: Push the new object into the array
+        // Push the new object into the array
         cartItems.push(cartItem);
 
-        // Step 4: Save the updated array back to sessionStorage
+        // Save the updated array back to sessionStorage
         sessionStorage.setItem('cartItems', JSON.stringify(cartItems));
     }
 
