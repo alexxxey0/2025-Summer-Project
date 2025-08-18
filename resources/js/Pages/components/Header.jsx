@@ -58,7 +58,7 @@ function Header(props) {
                                     <div
                                         onMouseEnter={() => setIsOpen(true)}
                                         onMouseLeave={() => setIsOpen(false)}
-                                        className="absolute top-full w-40 flex flex-col gap-y-4 p-4 bg-white border border-gray-300 rounded shadow-lg"
+                                        className="absolute top-full w-40 flex flex-col gap-y-4 p-4 bg-white border border-gray-300 rounded shadow-lg z-50"
                                     >
 
                                         {/* Arrow */}
@@ -107,7 +107,7 @@ function Header(props) {
                     <Link href="/my_profile"><SmallIcon src={asset_path + "/images/user_icon.svg"} alt="User icon" /> </Link>
                     <a href=""><SmallIcon src={asset_path + "images/search_icon.svg"} alt="Search icon" /> </a>
                     <div
-                        className="relative inline-block"
+                        className="relative inline-block bg-clip-content"
                         onMouseEnter={() => setCartIsHovered(true)}
                         onMouseLeave={() => setCartIsHovered(false)}
                     >
@@ -120,30 +120,38 @@ function Header(props) {
                             }
                         </Link>
 
+
+
                         {/* Popup */}
                         {cartIsHovered && (
-                            <div className="absolute right-0 w-[300px] bg-[#E5E5E5] rounded-md border border-gray-300 shadow-lg p-2 text-sm z-10">
-                                <div className="flex flex-col gap-y-8">
-                                    {cartItems.length > 0 && cartItems.map((cartItem) =>
-                                        <div key={cartItem.cart_item_id} className="flex gap-x-4 items-start">
-                                            <div className="flex flex-col">
-                                                <p className="mb-1">{cartItem.name}</p>
-                                                <p>Size: {cartItem.size}</p>
-                                                <p>Price per item: {cartItem.price} €</p>
-                                                <p>Quantity: {cartItem.quantity}</p>
-                                                <p className="font-bold text-lg">{cartItem.total_price.toFixed(2)} €</p>
+                            <div>
+                                <div
+                                    className="absolute right-2 w-0 h-0 border-l-8 border-l-transparent border-r-8 border-r-transparent border-b-8 border-b-[#E5E5E5]"
+                                    style={{ borderBottomColor: "gray-300" }}
+                                ></div>
+                                <div className="pt-2 absolute right-0">
+                                    <div className="w-[300px] bg-[#E5E5E5] rounded-md border border-gray-300 shadow-lg p-2 text-sm z-10 flex flex-col gap-y-8">
+                                        {cartItems.length > 0 && cartItems.map((cartItem) =>
+                                            <div key={cartItem.cart_item_id} className="flex gap-x-4 items-start">
+                                                <div className="flex flex-col">
+                                                    <p className="mb-1">{cartItem.name}</p>
+                                                    <p>Size: {cartItem.size}</p>
+                                                    <p>Price per item: {cartItem.price} €</p>
+                                                    <p>Quantity: {cartItem.quantity}</p>
+                                                    <p className="font-bold text-lg">{cartItem.total_price.toFixed(2)} €</p>
+                                                </div>
+                                                <img className="w-6/12" src={cartItem.image_path} alt="" />
                                             </div>
-                                            <img className="w-6/12" src={cartItem.image_path} alt="" />
+                                        )}
+                                        <div className="flex justify-between items-center">
+                                            <div className="flex flex-col text-lg">
+                                                <p>Total:</p>
+                                                <p className="font-bold">{cartTotalPrice.toFixed(2)} €</p>
+                                            </div>
+                                            <Link href="/cart" className='bg-black p-2 text-white text-lg font-bold rounded-md shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition cursor-pointer'>Order</Link>
                                         </div>
-                                    )}
-                                    <div className="flex justify-between items-center">
-                                        <div className="flex flex-col text-lg">
-                                            <p>Total:</p>
-                                            <p className="font-bold">{cartTotalPrice.toFixed(2)} €</p>
-                                        </div>
-                                        <Link href="/cart" className='bg-black p-2 text-white text-lg font-bold rounded-md shadow active:translate-y-0.5 active:shadow-inner hover:scale-105 transition cursor-pointer'>Order</Link>
+                                        {cartItems.length === 0 && <p>Your cart is empty</p>}
                                     </div>
-                                    {cartItems.length === 0 && <p>Your cart is empty</p>}
                                 </div>
                             </div>
                         )}
