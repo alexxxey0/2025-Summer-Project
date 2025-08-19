@@ -282,7 +282,6 @@ class UserController extends Controller {
             'quantity' => $request->quantity
         ]);
 
-        //return back()->with('flash_message', 'Product successfully added to cart!');
         return response()->json([
             'success' => true,
             'cart_item_id' => $cart_item->cart_item_id,
@@ -295,8 +294,6 @@ class UserController extends Controller {
         $cart_item = CartItem::where('cart_item_id', $request->id_to_delete)->first();
         $cart_item->delete();
 
-        //return back()->with('flash_message', 'Product removed from cart!');
-        session()->flash('flash_message', 'Product removed from cart!');
         return response()->json([
             'success' => true,
             'id_deleted' => $request->id_to_delete,

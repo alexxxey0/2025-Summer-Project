@@ -34,13 +34,10 @@ function Product({ product }) {
     function handleSizeButtonClick(e) {
         setSelectedSize(e.target.value);
         setQuantity(1); // Reset the quantity to 1 when user changes sizes
-        //setData('size', e.target.value);
-        //setData('quantity', 1);
     }
 
     function handleQuantityChange(e) {
         setQuantity(Number(e.target.value));
-        //setData('quantity', Number(e.target.value));
     }
 
     function addCartItemSession() {

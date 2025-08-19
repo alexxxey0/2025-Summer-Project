@@ -45,18 +45,6 @@ function Header(props) {
                 setFlashMessage(response.flash_message);
                 setCartItems(cartItems => cartItems.filter(cartItem => cartItem.cart_item_id !== idToDelete));
             });
-
-
-        /*
-        router.post('/remove_from_cart',
-            { id_to_delete: idToDelete },
-            {
-                onSuccess: (page) => {
-                    setCartItems(cartItems => cartItems.filter(cartItem => cartItem.cart_item_id !== idToDelete));
-                }
-            }
-        );
-        */
     }
 
     function removeCartItemSession(e, idToDelete) {
