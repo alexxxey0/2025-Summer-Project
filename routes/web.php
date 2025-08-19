@@ -71,6 +71,8 @@ Route::get('/cart', function () {
 // Routes for authenticated users
 Route::middleware(['auth'])->group(function () {
     Route::post('/add_to_cart', [UserController::class, 'add_to_cart'])->name('add_to_cart');
+    
+    Route::Post('/remove_from_cart', [UserController::class, 'remove_from_cart'])->name('remove_from_cart');
 });
 
 // Admin routes

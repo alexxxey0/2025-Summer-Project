@@ -62,7 +62,8 @@ class HandleInertiaRequests extends Middleware {
 
             'flash_message' => $request->session()->get('flash_message') ? $request->session()->get('flash_message') : null,
             'asset_path' => asset(''),
-            'cart_items_db' => $cart_items_db
+            'cart_items_db' => $cart_items_db,
+            'csrf_token' => csrf_token()
         ]);
     }
 }

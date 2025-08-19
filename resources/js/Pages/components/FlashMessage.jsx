@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { FlashMessageContext } from "./Layout";
 
 function FlashMessage(props) {
+    const {flashMessage, setFlashMessage} = useContext(FlashMessageContext);
 
     useEffect(() => {
         setTimeout(() => {
             const flash_message = document.getElementById('flash_message');
             if (flash_message) flash_message.style.display = 'none';
+            setFlashMessage(null);
         }, 5000);
 
     });

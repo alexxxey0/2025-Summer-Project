@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from "@inertiajs/react";
 import { useForm } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
+import { CartItemsContext } from './components/Layout';
 
 function Login() {
     // Form helper from Inertia documentation (https://www.inertiajs.com/forms)
@@ -9,9 +11,16 @@ function Login() {
         password: ''
     });
 
+    const { auth } = usePage().props;
+    const { cartItems, setCartItems } = React.useContext(CartItemsContext);
+
     function submit(e) {
         e.preventDefault();
-        post('/login');
+        post('/login', {
+            onSuccess: (page) => {
+                setCartItems(page.props.cart_items_db);
+            }
+        });
     }
 
     return (

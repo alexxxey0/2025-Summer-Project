@@ -276,13 +276,31 @@ class UserController extends Controller {
         $user = Auth::user();
         $product_variant = ProductVariant::where('product_id', $request->product_id)->where('size', $request->size)->first();
 
-        CartItem::create([
+        $cart_item = CartItem::create([
             'product_variant_id' => $product_variant->product_variant_id,
             'user_id' => $user->user_id,
             'quantity' => $request->quantity
         ]);
 
-        return back()->with('flash_message', 'Product successfully added to cart!');
+        //return back()->with('flash_message', 'Product successfully added to cart!');
+        return response()->json([
+            'success' => true,
+            'cart_item_id' => $cart_item->cart_item_id,
+            'flash_message' => 'Product successfully added to cart!'
+        ]);
     }
 
+
+    public function remove_from_cart(Request $request) {
+        $cart_item = CartItem::where('cart_item_id', $request->id_to_delete)->first();
+        $cart_item->delete();
+
+        //return back()->with('flash_message', 'Product removed from cart!');
+        session()->flash('flash_message', 'Product removed from cart!');
+        return response()->json([
+            'success' => true,
+            'id_deleted' => $request->id_to_delete,
+            'flash_message' => 'Product removed from cart!'
+        ]);
+    }
 }

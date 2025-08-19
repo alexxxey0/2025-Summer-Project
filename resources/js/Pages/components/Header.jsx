@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import SmallIcon from "./SmallIcon";
 import { Link } from "@inertiajs/react";
 import { usePage } from '@inertiajs/react';
 import { RiAdminFill } from "react-icons/ri";
+import { FaRegTrashAlt } from "react-icons/fa";
+import { CartItemsContext } from "./Layout";
+import { FlashMessageContext } from "./Layout";
+import { router } from '@inertiajs/react';
 
 
 
@@ -11,17 +15,69 @@ function Header(props) {
     const [cartIsHovered, setCartIsHovered] = useState(false);
     const { auth } = usePage().props;
     const { asset_path } = usePage().props;
-    const { cart_items_db } = usePage().props;
-    const cartItemsSession = JSON.parse(sessionStorage.getItem('cartItems')) || [];
+    const { csrf_token } = usePage().props;
+    //const { cart_items_db } = usePage().props;
+    //const cartItemsSession = JSON.parse(sessionStorage.getItem('cartItems')) || [];
 
     // For authenticated users, cart items are stored in the database
     // For unauthenticated users, cart items are stored in the session
-    const cartItems = auth.user ? cart_items_db : cartItemsSession;
+    //const cartItems = auth.user ? cart_items_db : cartItemsSession;
+    const { cartItems, setCartItems } = React.useContext(CartItemsContext);
 
     let cartTotalPrice = 0;
     cartItems.forEach(cartItem => {
         cartTotalPrice += Number(cartItem.total_price);
     });
+
+    const { flashMessage, setFlashMessage } = React.useContext(FlashMessageContext);
+    async function removeCartItemDb(e, idToDelete) {
+        e.preventDefault();
+        await fetch('/remove_from_cart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrf_token
+            },
+            body: JSON.stringify({ id_to_delete: idToDelete })
+        })
+            .then(response => response.json())
+            .then(response => {
+                setFlashMessage(response.flash_message);
+                setCartItems(cartItems => cartItems.filter(cartItem => cartItem.cart_item_id !== idToDelete));
+            });
+
+
+        /*
+        router.post('/remove_from_cart',
+            { id_to_delete: idToDelete },
+            {
+                onSuccess: (page) => {
+                    setCartItems(cartItems => cartItems.filter(cartItem => cartItem.cart_item_id !== idToDelete));
+                }
+            }
+        );
+        */
+    }
+
+    function removeCartItemSession(e, idToDelete) {
+        e.preventDefault();
+
+        // Retrieve and parse the existing array
+        let cartItemsSession = JSON.parse(sessionStorage.getItem('cartItems')) || [];
+
+        // Delete the item with the passed id from the array
+        cartItemsSession = cartItemsSession.filter(cartItem => cartItem.cart_item_id !== idToDelete);
+
+        // Save the updated array back to sessionStorage
+        sessionStorage.setItem('cartItems', JSON.stringify(cartItemsSession));
+        setCartItems(cartItemsSession);
+    }
+
+    function logOut() {
+        setCartItems([]);
+        sessionStorage.setItem('cartItems', JSON.stringify([]));
+        location.href = "/logout";
+    }
 
     return (
 
@@ -47,7 +103,7 @@ function Header(props) {
                         <a className="border-12 border-l-0 border-transparent" href="">Contact</a>
                         <Link href="/cart" className="border-12 border-transparent">Cart</Link>
                         {auth.user ?
-                            <Link href="/logout" className="border-12 border-transparent whitespace-nowrap">Log out</Link>
+                            <Link onClick={logOut} className="border-12 border-transparent whitespace-nowrap">Log out</Link>
                             :
                             <div className="flex flex-col gap-y-2 relative items-end" onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}
                             >
@@ -141,6 +197,7 @@ function Header(props) {
                                                     <p className="font-bold text-lg">{cartItem.total_price.toFixed(2)} €</p>
                                                 </div>
                                                 <img className="w-6/12" src={cartItem.image_path} alt="" />
+                                                <FaRegTrashAlt className="text-2xl cursor-pointer hover:scale-115 transition" onClick={auth.user ? (e) => { removeCartItemDb(e, cartItem.cart_item_id) } : (e) => { removeCartItemSession(e, cartItem.cart_item_id) }} />
                                             </div>
                                         )}
                                         <div className="flex justify-between items-center">

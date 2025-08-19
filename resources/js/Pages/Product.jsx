@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import SizeButton from "./components/SizeButton";
 import { usePage } from '@inertiajs/react';
-import { useForm } from '@inertiajs/react'
+import { useForm } from '@inertiajs/react';
+import { CartItemsContext } from "./components/Layout";
+import { FlashMessageContext } from "./components/Layout";
 
 function Product({ product }) {
     let sizes = product.sizes;
@@ -24,36 +26,30 @@ function Product({ product }) {
     const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
     const [quantity, setQuantity] = useState(1);
     const { auth } = usePage().props;
-
-    const { data, setData, post, processing, errors } = useForm({
-        product_id: product.product_id,
-        name: product.name,
-        size: selectedSize,
-        pricePerItem: product.price,
-        quantity: quantity,
-        totalPrice: Number(product.price) * quantity
-    });
+    const { csrf_token } = usePage().props;
+    const { cartItems, setCartItems } = useContext(CartItemsContext);
+    const { flashMessage, setFlashMessage } = useContext(FlashMessageContext);
 
 
     function handleSizeButtonClick(e) {
         setSelectedSize(e.target.value);
         setQuantity(1); // Reset the quantity to 1 when user changes sizes
-        setData('size', e.target.value);
-        setData('quantity', 1);
+        //setData('size', e.target.value);
+        //setData('quantity', 1);
     }
 
     function handleQuantityChange(e) {
         setQuantity(Number(e.target.value));
-        setData('quantity', Number(e.target.value));
+        //setData('quantity', Number(e.target.value));
     }
 
     function addCartItemSession() {
         // Retrieve and parse the existing array
-        let cartItems = JSON.parse(sessionStorage.getItem('cartItems')) || [];
+        let cartItemsSession = JSON.parse(sessionStorage.getItem('cartItems')) || [];
 
         let maxId = 0;
         if (cartItems.length > 0) {
-            maxId = Math.max(...cartItems.map(cartItem => cartItem.cart_item_id));
+            maxId = Math.max(...cartItemsSession.map(cartItem => cartItem.cart_item_id));
         }
 
         // Create the new object you want to append
@@ -69,15 +65,41 @@ function Product({ product }) {
         };
 
         // Push the new object into the array
-        cartItems.push(cartItem);
+        cartItemsSession.push(cartItem);
 
         // Save the updated array back to sessionStorage
-        sessionStorage.setItem('cartItems', JSON.stringify(cartItems));
+        sessionStorage.setItem('cartItems', JSON.stringify(cartItemsSession));
+        setCartItems(cartItems => [...cartItems, cartItem]);
     }
 
-    function addCartItemDb(e) {
+    async function addCartItemDb(e) {
         e.preventDefault();
-        post('/add_to_cart');
+        const cartItem = {
+            product_id: product.product_id,
+            name: product.name,
+            size: selectedSize,
+            price: product.price,
+            quantity: quantity,
+            total_price: Number(product.price) * quantity,
+            image_path: product.main_image_path,
+        };
+
+        const response = await fetch('/add_to_cart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrf_token
+            },
+            body: JSON.stringify(cartItem)
+        })
+            .then(response => response.json())
+            .then(response => {
+                setFlashMessage(response.flash_message);
+
+                // The cart item in the cartItems state variable has the same cart_item_id as the cart item in the database
+                const newCartItem = { ...cartItem, cart_item_id: response.cart_item_id };
+                setCartItems(cartItems => [...cartItems, newCartItem]);
+            });
     }
 
     return (
