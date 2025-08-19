@@ -67,6 +67,7 @@ function Product({ product }) {
         // Save the updated array back to sessionStorage
         sessionStorage.setItem('cartItems', JSON.stringify(cartItemsSession));
         setCartItems(cartItems => [...cartItems, cartItem]);
+        setFlashMessage('Product successfully added to cart!');
     }
 
     async function addCartItemDb(e) {
