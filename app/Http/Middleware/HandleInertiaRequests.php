@@ -47,7 +47,7 @@ class HandleInertiaRequests extends Middleware {
             $cart_items_db[$i]['size'] = $product_variant->size;
             $cart_items_db[$i]['price'] = $product->price;
             $cart_items_db[$i]['image_path'] = asset("storage/" . $main_image->image_path);
-            $cart_items_db[$i]['total_price'] = intval($product->price) * intval($cart_items_db[$i]['quantity']);
+            $cart_items_db[$i]['total_price'] = floatval($product->price) * intval($cart_items_db[$i]['quantity']);
         }
 
         // From Inertia documentation (https://inertiajs.com/shared-data)
