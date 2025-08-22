@@ -1,13 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ProductCard from "./components/ProductCard";
 import FilterDropdownButton from "./components/FilterDropdownButton";
 import { usePage } from '@inertiajs/react';
 import { IoIosArrowDown } from "react-icons/io";
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
+import '../../css/slider-custom.css';
 
 function AllProducts(props) {
 
     // variable for the products that are currently displayed
     const [displayedProducts, setDisplayedProducts] = useState(props.products);
+
+    const maxSliderValue = 500;
+    const [priceRange, setPriceRange] = useState([0, maxSliderValue]);
+
+    const marks = {};
+    for (let i = 0; i <= maxSliderValue; i += 250) {
+        marks[i] = `${i}€`;
+    }
+
+    // When slider moves
+    const onSliderChange = (newPriceRange) => {
+        setPriceRange(newPriceRange);
+    };
+
+    // When min input changes
+    const onMinInputChange = (e) => {
+        let newMin = Number(e.target.value);
+
+        // Clamp newMin between 0 and current max
+        if (newMin < 0) newMin = 0;
+        if (newMin > priceRange[1]) newMin = priceRange[1];
+
+        setPriceRange([newMin, priceRange[1]]);
+    };
+
+    // When max input changes
+    const onMaxInputChange = (e) => {
+        let newMax = Number(e.target.value);
+
+        // Clamp newMax between current min and maxSliderValue
+        if (newMax > maxSliderValue) newMax = maxSliderValue;
+        if (newMax < priceRange[0]) newMax = priceRange[0];
+
+        setPriceRange([priceRange[0], newMax]);
+    };
 
 
     const handleSort = (e) => {
@@ -24,6 +62,10 @@ function AllProducts(props) {
 
         setDisplayedProducts(sorted); // update state => triggers re-render
     }
+
+    useEffect(() => {
+        handleFilter();
+    }, [priceRange]);
 
     const handleFilter = (e) => {
         const selected_checkboxes = document.querySelectorAll('.filter_checkbox:checked'); // get all the selected checkboxes
@@ -42,7 +84,7 @@ function AllProducts(props) {
 
 
         // Filter the products down to only the ones that match the filter parameters
-        const filtered = props.products.filter((product) => {
+        let filtered_products = props.products.filter((product) => {
             for (const [key, value] of Object.entries(currentFilterParameters)) {
                 /*
                 If product's attribute's value is not among the selected values for this attribute, the product is not displayed.
@@ -55,8 +97,14 @@ function AllProducts(props) {
             return true;
         });
 
+        // Filter the products down to the ones in the selected price range
+        filtered_products = filtered_products.filter((product) => {
+            if (Number(product.price) < priceRange[0] || Number(product.price) > priceRange[1]) return false;
+            return true;
+        });
+
         // Update the setDisplayedProducts state variable with the filtered list of products, which will automatically trigger a rerender.
-        setDisplayedProducts(filtered);
+        setDisplayedProducts(filtered_products);
     }
 
     return (
@@ -74,6 +122,24 @@ function AllProducts(props) {
                         <FilterDropdownButton onCheckboxSelection={handleFilter} column="gender" title="Gender" values={props.filter_columns_values.gender}></FilterDropdownButton>
                         <FilterDropdownButton onCheckboxSelection={handleFilter} column="age_category" title="Age" values={props.filter_columns_values.age_category}></FilterDropdownButton>
                         <FilterDropdownButton onCheckboxSelection={handleFilter} column="season" title="Season" values={props.filter_columns_values.season}></FilterDropdownButton>
+                        <div className="flex flex-col gap-y-4 mt-4">
+                            <p>Price</p>
+                            <div className="text-xs self-center w-11/12 hidden xl:block">
+                                <Slider range value={priceRange} min={0} max={maxSliderValue} step={10} allowCross={false} marks={marks}
+                                    onChange={(e) => { onSliderChange(e) }}
+                                ></Slider>
+                            </div>
+                            <div className="flex flex-row gap-x-2 mt-2">
+                                <div className="flex flex-col">
+                                    <label htmlFor="min_price">Min</label>
+                                    <input className="border-2 rounded-md" min={0} type="number" name="min_price" id="" value={priceRange[0]} max={priceRange[1]} onChange={(e) => { onMinInputChange(e) }} step={10} />
+                                </div>
+                                <div className="flex flex-col">
+                                    <label htmlFor="max_price">Max</label>
+                                    <input className="border-2 rounded-md" min={priceRange[0]} type="number" name="max_price" value={priceRange[1]} max={maxSliderValue} onChange={(e) => { onMaxInputChange(e) }} step={10} />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
