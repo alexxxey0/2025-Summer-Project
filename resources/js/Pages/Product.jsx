@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import SizeButton from "./components/SizeButton";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 function Product({ product }) {
     let sizes = product.sizes;
@@ -21,11 +22,24 @@ function Product({ product }) {
 
     const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
     const [quantity, setQuantity] = useState(1);
+    const [selectedImage, setSelectedImage] = useState(1);
 
 
     function handleSizeButtonClick(e) {
         setSelectedSize(e.target.value);
         setQuantity(1); // Reset the quantity to 1 when user changes sizes
+    }
+
+    function showPreviousImage() {
+        if (selectedImage >= 2) {
+            setSelectedImage(selectedImage => selectedImage - 1);
+        }
+    }
+
+    function showNextImage() {
+        if (selectedImage < product.image_count) {
+            setSelectedImage(selectedImage => selectedImage + 1);
+        }
     }
 
     function add_to_cart() {
@@ -38,7 +52,16 @@ function Product({ product }) {
 
             <div className="flex flex-col lg:flex-row gap-y-8 gap-x-32 w-10/12 mx-auto mt-16">
                 <div className="w-full lg:w-6/12 xl:w-4/12 flex flex-col items-center">
-                    <img className="w-full" src={product.main_image_path} alt="Product main image" />
+
+                    <img className="h-[600px] w-full object-cover mb-4 shadow-md" src={product.images_paths[selectedImage - 1]} alt="Product main image" />
+
+                    <div className="flex flex-col items-center">
+                        <p>Image {selectedImage} of {product.image_count}</p>
+                        <div className="flex">
+                            <IoIosArrowBack onClick={showPreviousImage} className="text-2xl cursor-pointer"></IoIosArrowBack>
+                            <IoIosArrowForward onClick={showNextImage} className="text-2xl cursor-pointer"></IoIosArrowForward>
+                        </div>
+                    </div>
 
                     <div className="flex flex-col gap-y-2 lg:hidden mt-8">
                         <p className="border-2 rounded-xl p-2">{product.description}</p>

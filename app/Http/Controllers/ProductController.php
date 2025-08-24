@@ -42,6 +42,13 @@ class ProductController extends Controller {
         $main_image = ProductImage::where('product_id', $request->product_id)->where('main_image', true)->first();
         $product['main_image_path'] = asset("storage/" . $main_image->image_path);
 
+        $images_paths = ProductImage::where('product_id', $request->product_id)->pluck('image_path')->toArray();
+        $images_paths_full = array();
+        foreach ($images_paths as $image_path) {
+            $images_paths_full[] = asset("storage/" . $image_path);
+        }
+        $product['images_paths'] = $images_paths_full;
+
         $in_stock = array();
         $product_variants = ProductVariant::where('product_id', $request->product_id)->get();
         foreach ($product_variants as $product_variant) {
@@ -54,6 +61,9 @@ class ProductController extends Controller {
             $sizes[] = $product_variant->size;
         }
         $product['sizes'] = $sizes;
+
+        $image_count = ProductImage::where('product_id', $request->product_id)->count();
+        $product['image_count'] = $image_count;
 
         return Inertia::render('Product', ['product' => $product]);
     }
