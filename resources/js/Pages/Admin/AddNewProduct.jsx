@@ -72,12 +72,12 @@ function AddProduct(props) {
         name: '',
         description: '',
         price: '',
-        type: '',
-        color: '',
-        manufacturer: '',
-        gender: '',
-        age_category: '',
-        season: '',
+        type: 'Shirt',
+        color: 'Black',
+        manufacturer: 'Adidas',
+        gender: 'M',
+        age_category: 'Adult',
+        season: 'Summer',
         in_stock: in_stock,
         images: [],
         main_image_index: 0
@@ -121,37 +121,79 @@ function AddProduct(props) {
 
                     <div className='flex flex-col'>
                         <label htmlFor="type">Type<span className='text-red-500'>*</span></label>
-                        <input className='p-1 border-1 border-black rounded-md' type="text" name="type" required value={data.type} onChange={e => setData('type', e.target.value)} />
+                        <select name="type" className='p-1 border-1 border-black rounded-md' required value={data.type} onChange={e => setData('type', e.target.value)}>
+                            <option value="Shirt">Shirt</option>
+                            <option value="T-Shirt">T-Shirt</option>
+                            <option value="Hoodie">Hoodie</option>
+                            <option value="Jacket">Jacket</option>
+                            <option value="Pants">Pants</option>
+                            <option value="Socks">Socks</option>
+                            <option value="Shoes">Shoes</option>
+                            <option value="Hat">Hat</option>
+                            <option value="Accessory">Accessory</option>
+                        </select>
                         {errors.type && <div>{errors.type}</div>}
                     </div>
 
                     <div className='flex flex-col'>
                         <label htmlFor="color">Color<span className='text-red-500'>*</span></label>
-                        <input className='p-1 border-1 border-black rounded-md' type="text" name="color" required value={data.color} onChange={e => setData('color', e.target.value)} />
+                        <select name="color" className='p-1 border-1 border-black rounded-md' required value={data.color} onChange={e => setData('color', e.target.value)}>
+                            <option value="Black">Black</option>
+                            <option value="White">White</option>
+                            <option value="Red">Red</option>
+                            <option value="Green">Green</option>
+                            <option value="Blue">Blue</option>
+                            <option value="Yellow">Yellow</option>
+                            <option value="Orange">Orange</option>
+                            <option value="Violet">Violet</option>
+                            <option value="Pink">Pink</option>
+                            <option value="Brown">Brown</option>
+                            <option value="Gray">Gray</option>
+                        </select>
                         {errors.color && <div>{errors.color}</div>}
                     </div>
 
                     <div className='flex flex-col'>
                         <label htmlFor="manufacturer">Manufacturer<span className='text-red-500'>*</span></label>
-                        <input className='p-1 border-1 border-black rounded-md' type="text" name="manufacturer" required value={data.manufacturer} onChange={e => setData('manufacturer', e.target.value)} />
+                        <select name="manufacturer" className='p-1 border-1 border-black rounded-md' required value={data.manufacturer} onChange={e => setData('manufacturer', e.target.value)}>
+                            <option value="Adidas">Adidas</option>
+                            <option value="Nike">Nike</option>
+                            <option value="Puma">Puma</option>
+                            <option value="Reebok">Reebok</option>
+                            <option value="New Balance">New Balance</option>
+                        </select>
                         {errors.manufacturer && <div>{errors.manufacturer}</div>}
                     </div>
 
                     <div className='flex flex-col'>
                         <label htmlFor="gender">Gender<span className='text-red-500'>*</span></label>
-                        <input className='p-1 border-1 border-black rounded-md' type="text" name="gender" required value={data.gender} onChange={e => setData('gender', e.target.value)} />
+                        <select name="gender" className='p-1 border-1 border-black rounded-md' required value={data.gender} onChange={e => setData('gender', e.target.value)}>
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
+                            <option value="U">Unisex</option>
+                        </select>
                         {errors.gender && <div>{errors.gender}</div>}
                     </div>
 
                     <div className='flex flex-col'>
                         <label htmlFor="age_category">Age category<span className='text-red-500'>*</span></label>
-                        <input className='p-1 border-1 border-black rounded-md' type="text" name="age_category" required value={data.age_category} onChange={e => setData('age_category', e.target.value)} />
+                        <select name="age_category" className='p-1 border-1 border-black rounded-md' required value={data.age_category} onChange={e => setData('age_category', e.target.value)}>
+                            <option value="Baby">Baby</option>
+                            <option value="Kid">Kid</option>
+                            <option value="Teenager">Teenager</option>
+                            <option value="Adult">Adult</option>
+                            <option value="Senior">Senior</option>
+                        </select>
                         {errors.age_category && <div>{errors.age_category}</div>}
                     </div>
 
                     <div className='flex flex-col'>
                         <label htmlFor="season">Season<span className='text-red-500'>*</span></label>
-                        <input className='p-1 border-1 border-black rounded-md' type="text" name="season" required value={data.season} onChange={e => setData('season', e.target.value)} />
+                        <select name="season" className='p-1 border-1 border-black rounded-md' required value={data.season} onChange={e => setData('season', e.target.value)}>
+                            <option value="Summer">Summer</option>
+                            <option value="Winter">Winter</option>
+                            <option value="All-season">All-season</option>
+                        </select>
                         {errors.season && <div>{errors.season}</div>}
                     </div>
 
