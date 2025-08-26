@@ -49,6 +49,62 @@ function Cart() {
         setFlashMessage('Product removed from cart!');
     }
 
+    async function changeCartItemQuantityDb(e, idToChange, increase) {
+        e.preventDefault();
+
+        const itemToChange = cartItems.find(cartItem => cartItem.cart_item_id === idToChange);
+
+        // Prevent decreasing if quantity is 1
+        if (!(itemToChange.quantity === 1 && !increase)) {
+
+            await fetch('/change_cart_item_quantity', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrf_token
+                },
+                body: JSON.stringify({ id_to_change: idToChange, increase: increase })
+            })
+                .then(response => response.json())
+                .then(response => {
+                    setCartItems(cartItems =>
+                        cartItems.map((cartItem) =>
+                            cartItem.cart_item_id === idToChange ? {
+                                ...cartItem,
+                                quantity: increase ? cartItem.quantity + 1 : cartItem.quantity - 1,
+                                total_price: increase ? (cartItem.quantity + 1) * Number(cartItem.price) : (cartItem.quantity - 1) * Number(cartItem.price)
+                            } : cartItem)
+                    );
+                });
+        }
+    }
+
+    function changeCartItemQuantitySession(e, idToChange, increase) {
+        e.preventDefault();
+
+        const itemToChange = cartItems.find(cartItem => cartItem.cart_item_id === idToChange);
+
+        // Prevent decreasing if quantity is 1
+        if (!(itemToChange.quantity === 1 && !increase)) {
+            // Retrieve and parse the existing array
+            let cartItemsSession = JSON.parse(sessionStorage.getItem('cartItems')) || [];
+
+            // Change the quantity of the product and adjust the total price accordingly
+            cartItemsSession = cartItemsSession.map((cartItem) =>
+                cartItem.cart_item_id === idToChange ? {
+                    ...cartItem,
+                    quantity: increase ? cartItem.quantity + 1 : cartItem.quantity - 1,
+                    total_price: increase ? (cartItem.quantity + 1) * Number(cartItem.price) : (cartItem.quantity - 1) * Number(cartItem.price)
+                } : cartItem
+            );
+
+            // Save the updated array back to sessionStorage
+            sessionStorage.setItem('cartItems', JSON.stringify(cartItemsSession));
+            setCartItems(cartItemsSession);
+        }
+    }
+
+
     return (
         <div className="flex flex-col mt-10 justify-center mb-20">
             <div className="mx-auto w-full max-w-6xl">
@@ -78,9 +134,13 @@ function Cart() {
                             </div>
                             <button type='button' className='bg-black text-white px-5 py-2 rounded cursor-pointer w-4/12 hover:scale-105 transition' onClick={auth.user ? (e) => { removeCartItemDb(e, cartItem.cart_item_id) } : (e) => { removeCartItemSession(e, cartItem.cart_item_id) }}>Remove</button>
                         </div>
-                        <div className="text-center">{cartItem.price} €</div>
-                        <div className="text-center">{cartItem.quantity}</div>
-                        <div className="text-center">{cartItem.total_price} €</div>
+                        <div className="text-center">{Number(cartItem.price).toFixed(2)} €</div>
+                        <div className="flex gap-x-1 justify-center items-center w-full">
+                            <p className={(cartItem.quantity === 1 ? 'text-gray-300' : '') + ' text-3xl cursor-pointer'} onClick={auth.user ? (e) => { changeCartItemQuantityDb(e, cartItem.cart_item_id, false) } : (e) => { changeCartItemQuantitySession(e, cartItem.cart_item_id, false) }}>−</p>
+                            <p className='border-1 p-1 rounded w-3/12 text-center'>{cartItem.quantity}</p>
+                            <p className='text-3xl cursor-pointer' onClick={auth.user ? (e) => { changeCartItemQuantityDb(e, cartItem.cart_item_id, true) } : (e) => { changeCartItemQuantitySession(e, cartItem.cart_item_id, true) }}>+</p>
+                        </div>
+                        <div className="text-center">{Number(cartItem.total_price).toFixed(2)} €</div>
                     </div>
                 )}
 

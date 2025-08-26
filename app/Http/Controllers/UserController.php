@@ -300,4 +300,26 @@ class UserController extends Controller {
             'flash_message' => 'Product removed from cart!'
         ]);
     }
+
+
+    public function change_cart_item_quantity(Request $request) {
+        $cart_item = CartItem::where('cart_item_id', $request->id_to_change)->first();
+        if ($cart_item->quantity === 1 and !$request->increase) {
+            return response()->json([
+                'success' => false,
+                'id_updated' => $request->id_to_update,
+                'error_message' => "Cannot decrease product's quantity as it is already one."
+            ]);
+        }
+
+        // TODO: do not allow to increase quantity if there are not enough items in stock
+
+        $cart_item->update(['quantity' => $request->increase ? $cart_item->quantity + 1 : $cart_item->quantity - 1]);
+
+        return response()->json([
+            'success' => true,
+            'id_updated' => $request->id_to_update,
+            'flash_message' => "Product's quantity successfully changed!"
+        ]);
+    }
 }
