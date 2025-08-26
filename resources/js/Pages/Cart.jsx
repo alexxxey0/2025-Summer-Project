@@ -2,16 +2,52 @@ import React, { useContext } from 'react';
 import { usePage } from '@inertiajs/react';
 import { Link } from "@inertiajs/react";
 import { CartItemsContext } from './components/Layout';
+import { FlashMessageContext } from './components/Layout';
 
 function Cart() {
     const { asset_path } = usePage().props;
     const { cartItems, setCartItems } = useContext(CartItemsContext);
+    const { flashMessage, setFlashMessage } = useContext(FlashMessageContext);
+    const { auth } = usePage().props;
+    const { csrf_token } = usePage().props;
 
     let cartTotalPrice = 0;
     cartItems.forEach(cartItem => {
         cartTotalPrice += Number(cartItem.total_price);
     });
-    // console.log(cartItems);
+
+
+    async function removeCartItemDb(e, idToDelete) {
+        e.preventDefault();
+        await fetch('/remove_from_cart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrf_token
+            },
+            body: JSON.stringify({ id_to_delete: idToDelete })
+        })
+            .then(response => response.json())
+            .then(response => {
+                setFlashMessage(response.flash_message);
+                setCartItems(cartItems => cartItems.filter(cartItem => cartItem.cart_item_id !== idToDelete));
+            });
+    }
+
+    function removeCartItemSession(e, idToDelete) {
+        e.preventDefault();
+
+        // Retrieve and parse the existing array
+        let cartItemsSession = JSON.parse(sessionStorage.getItem('cartItems')) || [];
+
+        // Delete the item with the passed id from the array
+        cartItemsSession = cartItemsSession.filter(cartItem => cartItem.cart_item_id !== idToDelete);
+
+        // Save the updated array back to sessionStorage
+        sessionStorage.setItem('cartItems', JSON.stringify(cartItemsSession));
+        setCartItems(cartItemsSession);
+        setFlashMessage('Product removed from cart!');
+    }
 
     return (
         <div className="flex flex-col mt-10 justify-center mb-20">
@@ -32,11 +68,15 @@ function Cart() {
                 </div>
 
                 {cartItems.map((cartItem) =>
-                    <div key={cartItem.cart_item_id} className="grid grid-cols-[300px_1fr_150px_100px_150px] justify-items-center border-b py-6 items-center">
+                    <div key={cartItem.cart_item_id} className="relative grid grid-cols-[300px_1fr_150px_100px_150px] justify-items-center border-b py-6 items-center">
                         <img className="object-cover w-[300px]" src={cartItem.image_path} alt="" />
-                        <div>
-                            <h3 className="font-bold">{cartItem.name}</h3>
-                            <h4 className="text-gray-500">Size: {cartItem.size}</h4>
+                        <div className='flex flex-col justify-between h-full w-[300px]'>
+                            <button className='invisible' >Empty button</button>
+                            <div className=''>
+                                <h3 className="font-bold">{cartItem.name}</h3>
+                                <h4 className="text-gray-500">Size: {cartItem.size}</h4>
+                            </div>
+                            <button type='button' className='bg-black text-white px-5 py-2 rounded cursor-pointer w-4/12 hover:scale-105 transition' onClick={auth.user ? (e) => { removeCartItemDb(e, cartItem.cart_item_id) } : (e) => { removeCartItemSession(e, cartItem.cart_item_id) }}>Remove</button>
                         </div>
                         <div className="text-center">{cartItem.price} €</div>
                         <div className="text-center">{cartItem.quantity}</div>
